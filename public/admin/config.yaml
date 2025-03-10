@@ -1,7 +1,7 @@
 backend:
-  name: github
-  repo: Sloane-J/astro-blog
-  branch: main
+  name: git-gateway
+  branch: main  # Branch to update
+  repo: Sloane-J/astro-blog  # GitHub repository
 
 media_folder: "public/assets/blog"  # Where images are stored in the repo
 public_folder: "/assets/blog"  # URL path for accessing images
@@ -9,32 +9,15 @@ public_folder: "/assets/blog"  # URL path for accessing images
 collections:
   - name: "blog"
     label: "Astro Blog"
-    folder: "src/pages/blog"  # Astro Content Collection Folder
-    create: true
-    slug: "{{slug}}"
-    extension: md  # Ensure Markdown files are used
+    folder: "src/pages/blog"  # Where blog posts are stored
+    create: true  # Allow new posts
+    slug: "{{slug}}"  # Match Astro's dynamic routing
+    extension: "md"  # Ensure Markdown files
     fields:
-      - label: "Title"
-        name: "title"
-        widget: "string"
-      - label: "Publish Date"
-        name: "date"
-        widget: "datetime"
-      - label: "Featured Image"
-        name: "image"
-        widget: "image"
-        required: false
-      - label: "Description"
-        name: "description"
-        widget: "text"
-      - label: "Tags"
-        name: "tags"
-        widget: "list"
-        required: false
-      - label: "Category"
-        name: "category"
-        widget: "select"
-        options: ["Tech", "Lifestyle", "News"]
-      - label: "Body"
-        name: "body"
-        widget: "markdown"
+      - { label: "Layout", name: "layout", widget: "hidden", default: "../../layouts/BlogLayout.astro" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Publish Date", name: "date", widget: "datetime" }
+      - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
+      - { label: "Tags", name: "tags", widget: "list", required: false }
+      - { label: "Category", name: "category", widget: "select", options: ["Tech", "Lifestyle", "News"] }
+      - { label: "Body", name: "body", widget: "markdown" }
