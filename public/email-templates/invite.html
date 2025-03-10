@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>You're Invited to Join</title>
+</head>
+<body>
+    <p>You've been invited to join {{ siteName }}!</p>
+    <p>Click the button below to complete your registration:</p>
+    <p>
+        <a href="{{ siteURL }}/admin/#invite_token={{ token }}" style="padding: 10px 20px; background-color: #0073e6; color: white; text-decoration: none; border-radius: 5px;">
+            Accept Invitation
+        </a>
+    </p>
+    <p>If you have any issues, copy and paste this URL into your browser:</p>
+    <p>{{ siteURL }}/admin/#invite_token={{ token }}</p>
+</body>
+</html>
