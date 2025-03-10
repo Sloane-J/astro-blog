@@ -1,15 +1,16 @@
 backend:
   name: git-gateway
   branch: main  # Branch to update
-  repo: Sloane-J/astro-blog  # GitHub repository
 
 media_folder: "public/assets/blog"  # Where images are stored in the repo
 public_folder: "/assets/blog"  # URL path for accessing images
 
+publish_mode: editorial_workflow  # Enables draft and preview functionality
+
 collections:
   - name: "blog"
     label: "Astro Blog"
-    folder: "src/data/blog-posts"  # Where blog posts are stored
+    folder: "src/data/blog-posts"  # Ensure this matches your blog's location
     create: true  # Allow new posts
     slug: "{{slug}}"  # Match Astro's dynamic routing
     extension: "md"  # Ensure Markdown files
