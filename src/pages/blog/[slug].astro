@@ -1,55 +1,165 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Bio from '../../components/Bio.astro';
-import getPostData from '../../utils/getPostData';
 
-export async function getStaticPaths() {
-  const posts = await Astro.glob('../../data/blog-posts/*.md');
-  return posts.map(p => ({
-    params: { slug: p.file.split('/').pop().split('.').shift() },
-    props: { post: p },
-  }));
-}
+const title = 'Blog';
+const description = 'Latest articles.';
+const permalink = `${Astro.site.href}blog`;
 
-const { Content, frontmatter } = Astro.props.post;
-const { title, description, publishDate } = frontmatter;
-const { slug, readingTime } = getPostData(Astro.props.post);
-const permalink = `${Astro.site.href}blog/${slug}`;
+let allPosts = await Astro.glob('../../data/blog-posts/*.md');
+allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
-  <header>
-    <p>{publishDate} ~ {readingTime}</p>
-    <h1>{title}</h1>
-    <hr />
-  </header>
   <div class="container">
-    <article class="content">
-      <Content />
-    </article>
-    <hr />
-    <Bio />
+    <h1>Blog</h1>
+    {allPosts.map((post, index) => {
+      const href = `/blog/${post.file.split('/').pop().split('.').shift()}`;
+      return (
+        <div>
+          { index !== 0 && <hr /> }
+          <div class="post-item">
+            {post.frontmatter.featuredImage && (
+              <div class="featured-image-container">
+                <img 
+                  src={post.frontmatter.featuredImage} 
+                  alt={post.frontmatter.title}
+                  class="featured-image"
+                />
+              </div>
+            )}
+            <div class="post-content">
+              <h2>
+                <a href={href}>{post.frontmatter.title}</a>
+              </h2>
+              <p>{post.frontmatter.description}</p>
+              
+              <div class="post-meta">
+                {post.frontmatter.category && (
+                  <span class="category">{post.frontmatter.category}</span>
+                )}
+                
+                {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+                  <div class="tags">
+                    {post.frontmatter.tags.map(tag => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              <div class="post-item-footer">
+                <span class="post-item-date">— {post.frontmatter.publishDate}</span>
+                <a href={href} class="read-more-btn">Continue Reading</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    })}
   </div>
 </BaseLayout>
 
 <style>
-  header {
-    text-align: center;
-  }
-
-  header h1 {
-    margin-bottom: 0.7em;
-  }
-
-  header p {
-    color: var(--text-secondary);
-    text-transform: uppercase;
+  h2,
+  .post-item-footer {
     font-family: var(--font-family-sans);
-    font-weight: 600;
+    font-weight: 700;
   }
 
-  header hr {
-    min-width: 100px;
-    width: 30%;
+  .post-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 768px) {
+    .post-item {
+      flex-direction: row;
+      gap: 30px;
+    }
+  }
+
+  .featured-image-container {
+    flex: 0 0 280px;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .featured-image-container {
+      margin-bottom: 0;
+    }
+  }
+
+  .featured-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .post-content {
+    flex: 1;
+  }
+
+  .post-item-date {
+    color: var(--text-secondary);
+    text-align: left;
+    text-transform: uppercase;
+    margin-right: 16px;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .category {
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    background-color: var(--tag-bg, #f5f5f5);
+    color: var(--text-secondary);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+
+  .post-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .read-more-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .read-more-btn:hover {
+    background-color: var(--primary-hover, #3a56c6);
+  }
+
+  hr {
+    margin: 60px auto;
   }
 </style>
