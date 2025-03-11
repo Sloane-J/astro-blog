@@ -1,24 +1,38 @@
 backend:
   name: git-gateway
-  branch: main  # Branch to update
+  branch: main # Branch to update (optional; defaults to master)
 
-media_folder: "public/assets/blog"  # Where images are stored in the repo
-public_folder: "/assets/blog"  # URL path for accessing images
+# Publish mode option (editorial workflow)
+publish_mode: editorial_workflow
 
-publish_mode: editorial_workflow  # Enables draft and preview functionality
+# Media folder where uploaded images will be stored in your repo
+media_folder: "public/images/uploads" 
+# Public path to media
+public_folder: "/images/uploads"
 
 collections:
-  - name: "blog"
-    label: "Astro Blog"
-    folder: "src/data/blog-posts"  # Ensure this matches your blog's location
-    create: true  # Allow new posts
-    slug: "{{slug}}"  # Match Astro's dynamic routing
-    extension: "md"  # Ensure Markdown files
-    fields:
-      - { label: "Layout", name: "layout", widget: "hidden", default: "../../layouts/BlogLayout.astro" }
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Publish Date", name: "date", widget: "datetime" }
-      - { label: "Featured Image", name: "thumbnail", widget: "image", required: false }
-      - { label: "Tags", name: "tags", widget: "list", required: false }
-      - { label: "Category", name: "category", widget: "select", options: ["News", "Technology", "Trailers", "Deals"], default: "News" }
-      - { label: "Body", name: "body", widget: "markdown" }
+  - name: "blog" # Used in routes, e.g., /admin/collections/blog
+    label: "Blog" # Used in the UI
+    folder: "src/data/blog-posts" # Updated path to match your project structure
+    create: true # Allow users to create new documents in this collection
+    slug: "{{slug}}" # Filename template, e.g., YYYY-MM-DD-title.md
+    fields: # The fields for each document
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Publish Date", name: "date", widget: "datetime"}
+      - {label: "Author", name: "author", widget: "string"}
+      - {label: "Featured Image", name: "thumbnail", widget: "image", required: false}
+      - {label: "Description", name: "description", widget: "text", required: false}
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - { label: "News", value: "News" }
+          - { label: "Technology", value: "Technology" }
+          - { label: "Trailers", value: "Trailers" }
+          - { label: "Deals", value: "Deals" }
+      - label: "Tags"
+        name: "tags"
+        widget: "list"
+        allow_add: true
+        default: []
+      - {label: "Body", name: "body", widget: "markdown"}
