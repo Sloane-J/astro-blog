@@ -8,7 +8,6 @@ tags: ["Astro", "JavaScript", "Static Sites", "Performance"]
 keywords: ["astro framework", "static site generator", "web performance", "islands architecture", "component-based", "partial hydration"]
 ---
 
-![Illustration of woman using a computer receiving likes](/assets/blog/casual-life-3d-likes.webp)
 
 This page is an adapted version of [markdown-test-page](https://github.com/fullpipe/markdown-test-page). It should give you an idea of how different elements are styled on this template.
 
