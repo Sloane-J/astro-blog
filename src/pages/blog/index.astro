@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const title = 'Blog';
+const title = "Sloane's Log / Blog";
 const description = 'Latest articles.';
 const permalink = `${Astro.site.href}blog`;
 
@@ -18,12 +18,39 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
         <div>
           { index !== 0 && <hr /> }
           <div class="post-item">
-            <h2>
-              <a href={href}>{post.frontmatter.title}</a>
-            </h2>
-            <p>{post.frontmatter.description}</p>
-            <div class="post-item-footer">
-              <span class="post-item-date">— {post.frontmatter.publishDate}</span>
+            {post.frontmatter.featuredImage && (
+              <div class="featured-image-container">
+                <img 
+                  src={post.frontmatter.featuredImage} 
+                  alt={post.frontmatter.title}
+                  class="featured-image"
+                />
+              </div>
+            )}
+            <div class="post-content">
+              <h2>
+                <a href={href}>{post.frontmatter.title}</a>
+              </h2>
+              <p>{post.frontmatter.description}</p>
+              
+              <div class="post-meta">
+                {post.frontmatter.category && (
+                  <span class="category">{post.frontmatter.category}</span>
+                )}
+                
+                {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+                  <div class="tags">
+                    {post.frontmatter.tags.map(tag => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              <div class="post-item-footer">
+                <span class="post-item-date">— {post.frontmatter.publishDate}</span>
+                <a href={href} class="read-more-btn">Continue Reading</a>
+              </div>
             </div>
           </div>
         </div>
@@ -39,11 +66,96 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
     font-weight: 700;
   }
 
+  .post-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+  }
+
+  @media (min-width: 768px) {
+    .post-item {
+      flex-direction: row;
+      gap: 30px;
+    }
+  }
+
+  .featured-image-container {
+    flex: 0 0 280px;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .featured-image-container {
+      margin-bottom: 0;
+    }
+  }
+
+  .featured-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .post-content {
+    flex: 1;
+  }
+
   .post-item-date {
     color: var(--text-secondary);
     text-align: left;
     text-transform: uppercase;
     margin-right: 16px;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .category {
+    background-color: var(--primary-color, #4a6cf7); /* primary colour for better contrast */
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    background-color: #e0e0e0; /* Darker background for better contrast */
+    color: #555555; /* Darker text for better contrast */
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .post-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .read-more-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7); /* primary colour for better contrast */
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
   }
 
   hr {

@@ -2,7 +2,7 @@
 title: "Getting Started with Astro: A Modern Web Framework"
 description: "Learn how Astro can help you build faster websites with less JavaScript while maintaining a great developer experience."
 publishDate: "2025-03-01"
-featuredImage: "/images/astro-framework.jpg"
+featuredImage: "/assets/blog/casual-life-3d-meditation-crystal.webp"
 category: "Web Development"
 tags: ["Astro", "JavaScript", "Static Sites", "Performance"]
 keywords: ["astro framework", "static site generator", "web performance", "islands architecture", "component-based", "partial hydration"]
@@ -18,10 +18,11 @@ Astro introduces what they call the "Islands Architecture" - a paradigm where on
 
 ```js
 // Example of an Astro component with partial hydration
+/*
 ---
 import InteractiveCounter from '../components/InteractiveCounter.jsx';
 ---
-
+*/
 <html>
   <body>
     <h1>Welcome to my static site!</h1>
