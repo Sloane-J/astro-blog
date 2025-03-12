@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const title = "Sloane's Log / Blog";
+const title = "Sloane's Log | Blog";
 const description = 'Latest articles.';
 const permalink = `${Astro.site.href}blog`;
 
@@ -10,8 +10,8 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
-  <div class="container">
-    <h1>Blog</h1>
+  <div class="container"> 
+    <h1>Latest Posts</h1>
     {allPosts.map((post, index) => {
       const href = `/blog/${post.file.split('/').pop().split('.').shift()}`;
       return (
@@ -154,8 +154,14 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
     border-radius: 4px;
     text-decoration: none;
     font-size: 0.9rem;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.4s ease-in;
     font-weight: 500;
+  }
+
+  .read-more-btn:hover {
+    background-color: white; /* primary colour for better contrast */
+    color: var(--primary-color, #4a6cf7);
+    transition: background-color 0.4s ease-out;
   }
 
   hr {
