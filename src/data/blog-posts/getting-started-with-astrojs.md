@@ -1,7 +1,7 @@
 ---
 title: "Getting Started with Astro: A Modern Web Framework"
 description: "Learn how Astro can help you build faster websites with less JavaScript while maintaining a great developer experience."
-publishDate: "2025-03-01"
+publishDate: "11-01-2025"
 featuredImage: "/assets/blog/casual-life-3d-meditation-crystal.webp"
 category: "Web Development"
 tags: ["Astro", "JavaScript", "Static Sites", "Performance"]
