@@ -36,12 +36,52 @@ export default defineConfig({
             required: true,
           },
           {
+            type: "string",
+            name: "description",
+            label: "Description",
+            ui: {
+              component: "textarea",
+            },
+            required: true,
+          },
+          {
+            type: "string",
+            name: "publishDate",
+            label: "Publish Date (Display Format)",
+            description: "The date format displayed to readers (e.g., 11-01-2025)",
+          },
+          {
+            type: "image",
+            name: "featuredImage",
+            label: "Featured Image",
+            description: "Select a featured image for this post",
+          },
+          {
+            type: "string",
+            name: "category",
+            label: "Category",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "tags",
+            label: "Tags",
+            list: true,
+            description: "Add tags related to this post",
+          },
+          {
+            type: "string",
+            name: "keywords",
+            label: "SEO Keywords",
+            list: true,
+            description: "Add SEO keywords for this post",
+          },
+          {
             type: "rich-text",
             name: "body",
             label: "Body",
             isBody: true,
           },
-          // Add any other fields your blog posts need
         ],
       },
     ],

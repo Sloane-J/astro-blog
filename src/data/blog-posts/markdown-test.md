@@ -201,7 +201,7 @@ Ex amet id ex aliquip id do laborum excepteur exercitation elit sint commodo occ
 </button>
 ```
 
-[\[Top\]](#top)
+[c\[Top\]](#top)
 
 # <a name="Inline"></a>Inline elements
 
