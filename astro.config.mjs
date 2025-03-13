@@ -9,7 +9,9 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://astro-blog-template.netlify.app',
+  outDir: './dist',
+  publicDir: './public',
+  site: 'https://myastro-blogg.netlify.app',
   integrations: [mdx(), svelte(), tailwind()],
   markdown: {
     shikiConfig: {

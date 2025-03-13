@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
+    "dev": "tinacms dev -c \"astro dev\"",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
@@ -18,9 +18,12 @@
     "rehype-external-links": "^3.0.0",
     "remark-gfm": "^4.0.0",
     "remark-smartypants": "^2.0.0",
-    "svelte": "^5.23.0"
+    "svelte": "^5.23.0",
+    "tinacms": "^2.7.2"
   },
   "devDependencies": {
+    "@tinacms/cli": "^1.9.2",
+    "@types/node": "^22.13.10",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17"
