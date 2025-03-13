@@ -1,28 +1,41 @@
 ---
-title: Markdown Test Page
 publishDate: 01 Dec 2021
-description: A sample page with the most common elements of an article, including headings, paragraphs, lists, and images. Use it as a starting point for applying your own styles.
-featuredImage: '/assets/blog/casual-life-3d-likes.webp'
-category: "Web Development"
-tags: ["Astro", "JavaScript", "Static Sites", "Performance"]
-keywords: ["astro framework", "static site generator", "web performance", "islands architecture", "component-based", "partial hydration"]
+description: >-
+  A sample page with the most common elements of an article, including headings,
+  paragraphs, lists, and images. Use it as a starting point for applying your
+  own styles.
+featuredImage: /assets/blog/casual-life-3d-likes.webp
+category: Web Development
+tags:
+  - Astro
+  - JavaScript
+  - Static Sites
+  - Performance
+keywords:
+  - astro framework
+  - static site generator
+  - web performance
+  - islands architecture
+  - component-based
+  - partial hydration
+title: Markdown Test Page
+date: 2024-11-24T00:00:00.000Z
 ---
-
 
 This page is an adapted version of [markdown-test-page](https://github.com/fullpipe/markdown-test-page). It should give you an idea of how different elements are styled on this template.
 
 ## <a name="top"></a> Table of Contents
 
-- [Headings](#Headings)
-- [Paragraphs](#Paragraphs)
-- [Blockquotes](#Blockquotes)
-- [Lists](#Lists)
-- [Horizontal rule](#Horizontal)
-- [Table](#Table)
-- [Code](#Code)
-- [Inline elements](#Inline)
+* [Headings](#Headings)
+* [Paragraphs](#Paragraphs)
+* [Blockquotes](#Blockquotes)
+* [Lists](#Lists)
+* [Horizontal rule](#Horizontal)
+* [Table](#Table)
+* [Code](#Code)
+* [Inline elements](#Inline)
 
----
+***
 
 # <a name="Headings"></a>Headings
 
@@ -50,7 +63,7 @@ Veniam enim esse amet veniam deserunt laboris amet enim consequat. Minim nostrud
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-[[Top]](#top)
+[\[Top\]](#top)
 
 # <a name="Paragraphs"></a>Paragraphs
 
@@ -62,7 +75,7 @@ Officia dolore laborum aute incididunt commodo nisi velit est est elit et dolore
 
 Officia irure in non voluptate adipisicing sit amet tempor duis dolore deserunt enim ut. Reprehenderit incididunt in ad anim et deserunt deserunt Lorem laborum quis. Enim aute anim labore proident laboris voluptate elit excepteur in. Ex labore nulla velit officia ullamco Lorem Lorem id do. Dolore ullamco ipsum magna dolor pariatur voluptate ipsum id occaecat ipsum. Dolore tempor quis duis commodo quis quis enim.
 
-[[Top]](#top)
+[\[Top\]](#top)
 
 # <a name="Blockquotes"></a>Blockquotes
 
@@ -80,7 +93,7 @@ Ipsum excepteur cupidatat sunt minim ad eiusmod tempor sit.
 
 Adipisicing voluptate ipsum culpa voluptate id aute laboris labore esse fugiat veniam ullamco occaecat do ut. Tempor et esse reprehenderit veniam proident ipsum irure sit ullamco et labore ea excepteur nulla labore ut. Ex aute minim quis tempor in eu id id irure ea nostrud dolor esse.
 
-[[Top]](#top)
+[\[Top\]](#top)
 
 # <a name="Lists"></a>Lists
 
@@ -92,33 +105,33 @@ Adipisicing voluptate ipsum culpa voluptate id aute laboris labore esse fugiat v
    Deserunt officia esse aliquip consectetur duis ut labore laborum commodo aliquip aliquip velit pariatur dolore.
 4. Marionberry
 5. Melon
-   - Cantaloupe
-   - Honeydew
-   - Watermelon
+   * Cantaloupe
+   * Honeydew
+   * Watermelon
 6. Miracle fruit
 7. Mulberry
 
 ### Unordered List
 
-- Olive
-- Orange
-  - Blood orange
-  - Clementine
-- Papaya
-- Ut aute ipsum occaecat nisi culpa Lorem id occaecat cupidatat id id magna laboris ad duis. Fugiat cillum dolore veniam nostrud proident sint consectetur eiusmod irure adipisicing.
-- Passionfruit
+* Olive
+* Orange
+  * Blood orange
+  * Clementine
+* Papaya
+* Ut aute ipsum occaecat nisi culpa Lorem id occaecat cupidatat id id magna laboris ad duis. Fugiat cillum dolore veniam nostrud proident sint consectetur eiusmod irure adipisicing.
+* Passionfruit
 
-[[Top]](#top)
+[\[Top\]](#top)
 
 # <a name="Horizontal"></a>Horizontal rule
 
 In dolore velit aliquip labore mollit minim tempor veniam eu veniam ad in sint aliquip mollit mollit. Ex occaecat non deserunt elit laborum sunt tempor sint consequat culpa culpa qui sit. Irure ad commodo eu voluptate mollit cillum cupidatat veniam proident amet minim reprehenderit.
 
----
+***
 
 In laboris eiusmod reprehenderit aliquip sit proident occaecat. Non sit labore anim elit veniam Lorem minim commodo eiusmod irure do minim nisi. Dolor amet cillum excepteur consequat sint non sint.
 
-[[Top]](#top)
+[\[Top\]](#top)
 
 # <a name="Table"></a>Table
 
@@ -134,7 +147,7 @@ Duis sunt ut pariatur reprehenderit mollit mollit magna dolore in pariatur nulla
 
 Minim id consequat adipisicing cupidatat laborum culpa veniam non consectetur et duis pariatur reprehenderit eu ex consectetur. Sunt nisi qui eiusmod ut cillum laborum Lorem officia aliquip laboris ullamco nostrud laboris non irure laboris. Cillum dolore labore Lorem deserunt mollit voluptate esse incididunt ex dolor.
 
-[[Top]](#top)
+[\[Top\]](#top)
 
 # <a name="Code"></a>Code
 
@@ -188,7 +201,7 @@ Ex amet id ex aliquip id do laborum excepteur exercitation elit sint commodo occ
 </button>
 ```
 
-[[Top]](#top)
+[\[Top\]](#top)
 
 # <a name="Inline"></a>Inline elements
 
@@ -196,11 +209,11 @@ Sint ea anim ipsum ad commodo cupidatat do **exercitation** incididunt et minim 
 
 ![Super wide](/assets/blog/casual-life-3d-workspace.webp)
 
-_Proident sit veniam in est proident officia adipisicing_ ea tempor cillum non cillum velit deserunt. Voluptate laborum incididunt sit consectetur Lorem irure incididunt voluptate nostrud. Commodo ut eiusmod tempor cupidatat esse enim minim ex anim consequat. Mollit sint culpa qui laboris quis consectetur ad sint esse. Amet anim anim minim ullamco et duis non irure. Sit tempor adipisicing ea laboris `culpa ex duis sint` anim aute reprehenderit id eu ea. Aute [excepteur proident](#) Lorem minim adipisicing nostrud mollit ad ut voluptate do nulla esse occaecat aliqua sint anim.
+*Proident sit veniam in est proident officia adipisicing* ea tempor cillum non cillum velit deserunt. Voluptate laborum incididunt sit consectetur Lorem irure incididunt voluptate nostrud. Commodo ut eiusmod tempor cupidatat esse enim minim ex anim consequat. Mollit sint culpa qui laboris quis consectetur ad sint esse. Amet anim anim minim ullamco et duis non irure. Sit tempor adipisicing ea laboris `culpa ex duis sint` anim aute reprehenderit id eu ea. Aute [excepteur proident](#) Lorem minim adipisicing nostrud mollit ad ut voluptate do nulla esse occaecat aliqua sint anim.
 
 <img src="/assets/blog/casual-life-3d-girl-boy-poses.webp" alt="Not so wide" style="float: left" />
 
-Incididunt in culpa cupidatat mollit cillum qui proident sit. In cillum aliquip incididunt voluptate magna amet cupidatat cillum pariatur sint aliqua est _enim **anim** voluptate_. Magna aliquip proident incididunt id duis pariatur eiusmod incididunt commodo culpa dolore sit. Culpa do nostrud elit ad exercitation anim pariatur non minim nisi **adipisicing sunt _officia_**. Do deserunt magna mollit Lorem commodo ipsum do cupidatat mollit enim ut elit veniam ea voluptate. Sint ea anim ipsum ad commodo cupidatat do **exercitation** incididunt et minim ad labore sunt. Minim deserunt labore laboris velit nulla incididunt ipsum nulla.
+Incididunt in culpa cupidatat mollit cillum qui proident sit. In cillum aliquip incididunt voluptate magna amet cupidatat cillum pariatur sint aliqua est *enim **anim** voluptate*. Magna aliquip proident incididunt id duis pariatur eiusmod incididunt commodo culpa dolore sit. Culpa do nostrud elit ad exercitation anim pariatur non minim nisi **adipisicing sunt *officia***. Do deserunt magna mollit Lorem commodo ipsum do cupidatat mollit enim ut elit veniam ea voluptate. Sint ea anim ipsum ad commodo cupidatat do **exercitation** incididunt et minim ad labore sunt. Minim deserunt labore laboris velit nulla incididunt ipsum nulla.
 
 <iframe width="100%" height="400" src="https://www.youtube.com/embed/PCp2iXA1uLE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

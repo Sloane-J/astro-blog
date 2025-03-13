@@ -1,11 +1,24 @@
 ---
-title: "Getting Started with Astro: A Modern Web Framework"
-description: "Learn how Astro can help you build faster websites with less JavaScript while maintaining a great developer experience."
-publishDate: "11-01-2025"
-featuredImage: "/assets/blog/casual-life-3d-meditation-crystal.webp"
-category: "Web Development"
-tags: ["Astro", "JavaScript", "Static Sites", "Performance"]
-keywords: ["astro framework", "static site generator", "web performance", "islands architecture", "component-based", "partial hydration"]
+description: >-
+  Learn how Astro can help you build faster websites with less JavaScript while
+  maintaining a great developer experience.
+publishDate: 11-01-2025
+featuredImage: /assets/blog/casual-life-3d-meditation-crystal.webp
+category: Web Development
+tags:
+  - Astro
+  - JavaScript
+  - Static Sites
+  - Performance
+keywords:
+  - astro framework
+  - static site generator
+  - web performance
+  - islands architecture
+  - component-based
+  - partial hydration
+title: 'Getting Started with Astro: A Modern Web Framework'
+date: 2025-03-11T00:00:00.000Z
 ---
 
 # Getting Started with Astro: A Modern Web Framework
@@ -43,15 +56,16 @@ Use Any Framework: React, Preact, Svelte, Vue, Solid, Lit and more are officiall
 Incredible Performance: **Astro** websites consistently rank in the fastest 1% of all websites.
 
 ## Getting Started
+
 Setting up a new **Astro** project is straightforward. You can use the following command to create a new project:
 
 This blog post includes all the required front matter fields from your layout:
-- title
-- description
-- publishDate
-- featuredImage (optional)
-- category (optional)
-- tags (optional)
 
+* title
+* description
+* publishDate
+* featuredImage (optional)
+* category (optional)
+* tags (optional)
 
 The format follows a standard markdown structure with headings, paragraphs, and code blocks, which should render properly in your **Astro** blog setup.
