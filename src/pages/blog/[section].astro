@@ -78,6 +78,13 @@ const permalink = `${Astro.site.href}blog/${Astro.params.section}`;
         </div>
       )
     })}
+    
+    {posts.length === 0 && (
+      <div class="no-posts">
+        <p>No posts found in this section yet.</p>
+        <a href="/blog" class="read-more-btn">Back to All Posts</a>
+      </div>
+    )}
   </div>
 </BaseLayout>
 
@@ -186,3 +193,35 @@ const permalink = `${Astro.site.href}blog/${Astro.params.section}`;
   }
 
   .read-more-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.4s ease-in;
+    font-weight: 500;
+  }
+
+  .read-more-btn:hover {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    transition: background-color 0.4s ease-out;
+  }
+
+  .no-posts {
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  .no-posts p {
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+  }
+
+  hr {
+    margin: 60px auto;
+  }
+</style>

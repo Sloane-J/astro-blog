@@ -30,10 +30,10 @@ export default defineConfig({
             required: true,
           },
           {
-            type: "datetime",
-            name: "date",
-            label: "Date",
-            required: true,
+            type: "rich-text",
+            name: "body",
+            label: "Body",
+            isBody: true,
           },
           {
             type: "string",
@@ -45,20 +45,16 @@ export default defineConfig({
             required: true,
           },
           {
-            type: "string",
-            name: "author",
-            label: "Author",
-            ui: {
-              component: 'select', 
-              options : ["Samuel D. Jnr", "Enerstina"],
-            },
+            type: "datetime",
+            name: "date",
+            label: "Date",
             required: true,
           },
           {
             type: "string",
             name: "publishDate",
             label: "Publish Date (Display Format)",
-            description: "The date format displayed to readers (e.g., 11-01-2025)",
+            description: "The date format displayed to readers (e.g., March 14, 2025)",
           },
           {
             type: "image",
@@ -68,9 +64,23 @@ export default defineConfig({
           },
           {
             type: "string",
+            name: "author",
+            label: "Author",
+            required: true,
+            ui: {
+              component: "select",
+              options: ["Samuel D. Jnr", "Enerstina"],
+            },
+          },
+          {
+            type: "string",
             name: "category",
             label: "Category",
             required: true,
+            ui: {
+              component: "select",
+              options: ["News", "Tech and Science", "Trailers", "Deals"],
+            },
           },
           {
             type: "string",
@@ -78,6 +88,15 @@ export default defineConfig({
             label: "Tags",
             list: true,
             description: "Add tags related to this post",
+            ui: {
+              component: "tags",
+            },
+          },
+          {
+            type: "boolean",
+            name: "featured",
+            label: "Featured Post",
+            description: "Mark this post as featured to highlight it on the homepage",
           },
           {
             type: "string",
@@ -85,12 +104,9 @@ export default defineConfig({
             label: "SEO Keywords",
             list: true,
             description: "Add SEO keywords for this post",
-          },
-          {
-            type: "rich-text",
-            name: "body",
-            label: "Body",
-            isBody: true,
+            ui: {
+              component: "tags",
+            },
           },
         ],
       },
