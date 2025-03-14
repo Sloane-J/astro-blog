@@ -10,8 +10,8 @@ export default defineConfig({
   },
   media: {
     tina: {
-      mediaRoot: "images",
-      publicFolder: "public/assets/blog",
+      mediaRoot: "blog",
+      publicFolder: "public/assets/",
     },
   },
   schema: {
@@ -41,6 +41,16 @@ export default defineConfig({
             label: "Description",
             ui: {
               component: "textarea",
+            },
+            required: true,
+          },
+          {
+            type: "string",
+            name: "author",
+            label: "Author",
+            ui: {
+              component: 'select', 
+              options : ["Samuel D. Jnr", "Enerstina"],
             },
             required: true,
           },

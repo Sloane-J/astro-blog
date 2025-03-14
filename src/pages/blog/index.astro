@@ -1,18 +1,75 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const title = "Sloane's Log | Blog";
-const description = 'Latest articles.';
+const title = "Luminary ☀ | Blog";
+const description = 'Latest articles on News, Tech and Science, Trailers, and Deals.';
 const permalink = `${Astro.site.href}blog`;
 
 let allPosts = await Astro.glob('../../data/blog-posts/*.md');
 allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
+
+// Get unique sections from posts
+const sections = [...new Set(allPosts.map(post => post.frontmatter.category).filter(Boolean))];
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
-  <div class="container"> 
-    <h1>Latest Posts</h1>
-    {allPosts.map((post, index) => {
+  <div class="container">
+    <h1>The Blog</h1>
+    
+    <!-- Section Navigation -->
+    <div class="section-navigation">
+      {sections.map(section => (
+        <a href={`/blog/${section.toLowerCase().replace(/\s+/g, '-')}`} class="section-link">
+          {section}
+        </a>
+      ))}
+    </div>
+
+    <!-- Featured Post (First Post) -->
+    {allPosts.length > 0 && (
+      <div class="featured-post">
+        <h2>Featured Post</h2>
+        <div class="post-item featured">
+          {allPosts[0].frontmatter.featuredImage && (
+            <div class="featured-image-container large">
+              <img 
+                src={allPosts[0].frontmatter.featuredImage} 
+                alt={allPosts[0].frontmatter.title}
+                class="featured-image"
+              />
+            </div>
+          )}
+          <div class="post-content">
+            <h2>
+              <a href={`/blog/${allPosts[0].file.split('/').pop().split('.').shift()}`}>{allPosts[0].frontmatter.title}</a>
+            </h2>
+            <p>{allPosts[0].frontmatter.description}</p>
+            
+            <div class="post-meta">
+              {allPosts[0].frontmatter.category && (
+                <span class="category">{allPosts[0].frontmatter.category}</span>
+              )}
+              
+              {allPosts[0].frontmatter.tags && allPosts[0].frontmatter.tags.length > 0 && (
+                <div class="tags">
+                  {allPosts[0].frontmatter.tags.map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div class="post-item-footer">
+              <span class="post-item-date">— {allPosts[0].frontmatter.publishDate}</span>
+              <a href={`/blog/${allPosts[0].file.split('/').pop().split('.').shift()}`} class="read-more-btn">Continue Reading</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <h2>Latest Posts</h2>
+    {allPosts.slice(1).map((post, index) => {
       const href = `/blog/${post.file.split('/').pop().split('.').shift()}`;
       return (
         <div>
@@ -35,7 +92,9 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
               
               <div class="post-meta">
                 {post.frontmatter.category && (
-                  <span class="category">{post.frontmatter.category}</span>
+                  <a href={`/blog/${post.frontmatter.category.toLowerCase().replace(/\s+/g, '-')}`} class="category">
+                    {post.frontmatter.category}
+                  </a>
                 )}
                 
                 {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
@@ -66,10 +125,47 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
     font-weight: 700;
   }
 
+  .section-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+  }
+
+  .section-link {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .section-link:hover {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    box-shadow: 0 0 0 2px var(--primary-color, #4a6cf7);
+  }
+
+  .featured-post {
+    margin-bottom: 60px;
+  }
+
   .post-item {
     display: flex;
     flex-direction: column;
     margin-bottom: 40px;
+  }
+
+  .post-item.featured {
+    border-radius: 12px;
+    padding: 20px;
+    background-color: rgba(74, 108, 247, 0.05);
+    border: 1px solid rgba(74, 108, 247, 0.1);
   }
 
   @media (min-width: 768px) {
@@ -84,6 +180,17 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
     margin-bottom: 20px;
   }
 
+  .featured-image-container.large {
+    flex: 0 0 100%;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .featured-image-container.large {
+      flex: 0 0 400px;
+    }
+  }
+
   @media (min-width: 768px) {
     .featured-image-container {
       margin-bottom: 0;
@@ -95,6 +202,10 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
     height: 180px;
     object-fit: cover;
     border-radius: 8px;
+  }
+
+  .featured-image-container.large .featured-image {
+    height: 250px;
   }
 
   .post-content {
@@ -116,12 +227,13 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
   }
 
   .category {
-    background-color: var(--primary-color, #4a6cf7); /* primary colour for better contrast */
+    background-color: var(--primary-color, #4a6cf7);
     color: white;
     padding: 3px 10px;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 500;
+    text-decoration: none;
   }
 
   .tags {
@@ -131,8 +243,8 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
   }
 
   .tag {
-    background-color: #e0e0e0; /* Darker background for better contrast */
-    color: #555555; /* Darker text for better contrast */
+    background-color: #e0e0e0;
+    color: #555555;
     padding: 3px 10px;
     border-radius: 20px;
     font-size: 0.85rem;
@@ -149,7 +261,7 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
   .read-more-btn {
     display: inline-block;
     padding: 8px 16px;
-    background-color: var(--primary-color, #4a6cf7); /* primary colour for better contrast */
+    background-color: var(--primary-color, #4a6cf7);
     color: white;
     border-radius: 4px;
     text-decoration: none;
@@ -159,7 +271,7 @@ allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf()
   }
 
   .read-more-btn:hover {
-    background-color: white; /* primary colour for better contrast */
+    background-color: white;
     color: var(--primary-color, #4a6cf7);
     transition: background-color 0.4s ease-out;
   }

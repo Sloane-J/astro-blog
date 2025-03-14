@@ -1,6 +1,24 @@
 ---
-title: so it goes
-date: 2025-02-24T00:00:00.000Z
+title: Testing for Astrojs + Tina CMS
+date: 2025-03-12T00:00:00.000Z
+description: This is a sample text for I make changes tina's config fields
+author: Samuel D. Jnr
+publishDate: 12-03-2025
+featuredImage: /assets/blog/images/noella.jpg
+category: Web Deveopment
+tags:
+  - Static Site Generation
+  - Web Development
+  - Astrojs
+  - Tina CMS
+keywords:
+  - Easily done
+  - Tina CMS
+  - CMS
+  - Astrojs
+  - Web Development
+  - Static Site Generation
+Reading time: 5 minutes
 ---
 
 let me just write something here
@@ -9,7 +27,7 @@ let me just write something here
 | ------- | --------------- |
 | text    | another text    |
 
-dsdsd 
+dsdsd
 
 ```mermaid
 %% This won't render without implementing a rendering engine (e.g. mermaid on npm)
@@ -25,4 +43,4 @@ flowchart TD
 <code>This is a code block</code>
 ```
 
-![](</images/HTU STUDENT LOGINS.jpg>)
+![](</assets/blog/images/HTU STUDENT LOGINS.jpg>)
