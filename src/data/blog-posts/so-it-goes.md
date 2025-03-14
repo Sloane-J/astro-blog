@@ -5,7 +5,7 @@ description: This is a sample text for I make changes tina's config fields
 author: Samuel D. Jnr
 publishDate: 12-03-2025
 featuredImage: /assets/blog/images/noella.jpg
-category: Web Deveopment
+category: Tech and Science
 tags:
   - Static Site Generation
   - Web Development

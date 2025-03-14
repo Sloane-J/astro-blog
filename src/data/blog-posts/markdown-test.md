@@ -5,7 +5,7 @@ description: >-
   paragraphs, lists, and images. Use it as a starting point for applying your
   own styles.
 featuredImage: /assets/blog/casual-life-3d-likes.webp
-category: Web Development
+category: Tech and Science
 tags:
   - Astro
   - JavaScript

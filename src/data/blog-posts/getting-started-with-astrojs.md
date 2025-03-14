@@ -2,9 +2,9 @@
 description: >-
   Learn how Astro can help you build faster websites with less JavaScript while
   maintaining a great developer experience.
-publishDate: 11-01-2025
+publishDate: 11-03-2025
 featuredImage: /assets/blog/casual-life-3d-meditation-crystal.webp
-category: Web Development
+category: Tech and Science
 tags:
   - Astro
   - JavaScript
