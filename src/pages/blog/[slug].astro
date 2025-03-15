@@ -21,6 +21,8 @@ const { post } = Astro.props;
 const title = post.frontmatter.title;
 const description = post.frontmatter.description;
 const permalink = `${Astro.site.href}blog/${post.file.split('/').pop().split('.').shift()}`;
+
+console.log('Page data: , page');
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">

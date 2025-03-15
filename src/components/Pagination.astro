@@ -1,71 +1,45 @@
 ---
-const { currentPage = 1, totalPages = 1, urlBase = "/blog" } = Astro.props;
+// components/Pagination.astro
+const { currentPage, totalPages, urlBase } = Astro.props;
 
 const prevPage = currentPage > 1 ? currentPage - 1 : null;
 const nextPage = currentPage < totalPages ? currentPage + 1 : null;
-
-// Ensure pageNumbers is always an array
-let pageNumbers = [];
-
-if (totalPages > 1) {
-  if (totalPages <= 5) {
-    pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  } else {
-    pageNumbers.push(1);
-    if (currentPage > 3) pageNumbers.push("...");
-    
-    let start = Math.max(2, currentPage - 1);
-    let end = Math.min(totalPages - 1, currentPage + 1);
-    
-    for (let i = start; i <= end; i++) {
-      pageNumbers.push(i);
-    }
-
-    if (currentPage < totalPages - 2) pageNumbers.push("...");
-    pageNumbers.push(totalPages);
-  }
-}
 ---
 
-{totalPages > 1 && (
-  <div class="pagination">
-    <div class="pagination-links">
-      {prevPage ? (
-        <a href={`${urlBase}${prevPage === 1 ? '' : `/${prevPage}`}`} class="pagination-link prev">
-          &larr; Previous
+<div class="pagination">
+  <div class="pagination-links">
+    {prevPage ? (
+      <a href={`${urlBase}${prevPage === 1 ? '' : `/${prevPage}`}`} class="pagination-link prev">
+        &larr; Previous
+      </a>
+    ) : (
+      <span class="pagination-link prev disabled">&larr; Previous</span>
+    )}
+    
+    <div class="pagination-numbers">
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <a 
+          href={`${urlBase}${page === 1 ? '' : `/${page}`}`} 
+          class={`pagination-number ${currentPage === page ? 'active' : ''}`}
+        >
+          {page}
         </a>
-      ) : (
-        <span class="pagination-link prev disabled">&larr; Previous</span>
-      )}
-      
-      <div class="pagination-numbers">
-        {pageNumbers.length > 0 
-          ? pageNumbers.map((page) => (
-              page === "..." 
-              ? <span class="pagination-ellipsis">...</span>
-              : <a href={`${urlBase}${page === 1 ? '' : `/${page}`}`} class={`pagination-number ${currentPage === page ? 'active' : ''}`}>
-                  {page}
-                </a>
-            ))
-          : <span class="pagination-ellipsis">No Pages</span>
-        }
-      </div>
-      
-      {nextPage ? (
-        <a href={`${urlBase}/${nextPage}`} class="pagination-link next">
-          Next &rarr;
-        </a>
-      ) : (
-        <span class="pagination-link next disabled">Next &rarr;</span>
-      )}
+      ))}
     </div>
     
-    <div class="pagination-info">
-      Page {currentPage} of {totalPages}
-    </div>
+    {nextPage ? (
+      <a href={`${urlBase}${nextPage === 1 ? '' : `/${nextPage}`}`} class="pagination-link next">
+        Next &rarr;
+      </a>
+    ) : (
+      <span class="pagination-link next disabled">Next &rarr;</span>
+    )}
   </div>
-)}
-
+  
+  <div class="pagination-info">
+    Page {currentPage} of {totalPages}
+  </div>
+</div>
 
 <style>
   .pagination {
@@ -104,12 +78,6 @@ if (totalPages > 1) {
   .pagination-numbers {
     display: flex;
     gap: 5px;
-    align-items: center;
-  }
-  
-  .pagination-ellipsis {
-    margin: 0 5px;
-    color: var(--text-secondary);
   }
   
   .pagination-number {

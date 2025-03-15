@@ -1,21 +1,34 @@
 ---
 // src/pages/blog/[page].astro
 import Pagination from "../../components/Pagination.astro";
+//import { frontmatter } from "astro:content";
 
-const postsPerPage = 5;
-const allPosts = await Astro.glob("../../data/blog-posts/*.md");
-const totalPages = Math.ceil(allPosts.length / postsPerPage);
-
-const { page } = Astro.params;
-const currentPage = parseInt(page, 10);
-
-// Redirect /blog/1 to /blog
-if (currentPage === 1) {
-  Astro.redirect("/blog");
+export async function getStaticPaths() {
+  const postsPerPage = 5;
+  const allPosts = await Astro.glob("../../data/blog-posts/*.md");
+  const totalPages = Math.ceil(allPosts.length / postsPerPage);
+  
+  // Create an array for each page
+  return Array.from({ length: totalPages }).map((_, i) => {
+    const pageNum = i + 1;
+    const start = i * postsPerPage;
+    const paginatedPosts = allPosts.slice(start, start + postsPerPage);
+    
+    // Skip page 1 as it's handled by /blog/index.astro
+    if (pageNum === 1) {
+      return null;
+    }
+    
+    return {
+      params: { page: String(pageNum) },
+      props: { paginatedPosts, currentPage: pageNum, totalPages }
+    };
+  }).filter(page => page !== null); // Filter out null values (page 1)
 }
 
-const start = (currentPage - 1) * postsPerPage;
-const paginatedPosts = allPosts.slice(start, start + postsPerPage);
+const { paginatedPosts, currentPage, totalPages } = Astro.props;
+
+console.log(`Page data: ${currentPage}`);
 ---
 
 <ul>
