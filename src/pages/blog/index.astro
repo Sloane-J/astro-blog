@@ -1,20 +1,42 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Pagination from '../../components/Pagination.astro';
 
-const title = "Luminary ☀ | Blog";
-const description = 'Latest articles on News, Tech and Science, Trailers, and Deals.';
-const permalink = `${Astro.site.href}blog`;
+export async function getStaticPaths({ paginate }) {
+  const title = "Luminary ☀ | Blog";
+  const description = 'Latest articles on News, Tech and Science, Trailers, and Deals.';
+  const permalink = `${Astro.site.href}blog`;
 
-let allPosts = await Astro.glob('../../data/blog-posts/*.md');
-allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
+  let allPosts = await Astro.glob('../../data/blog-posts/*.md');
+  allPosts = allPosts.sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
 
-// Get unique sections from posts
-const sections = [...new Set(allPosts.map(post => post.frontmatter.category).filter(Boolean))];
+  // Get unique sections from posts
+  const sections = [...new Set(allPosts.map(post => post.frontmatter.category).filter(Boolean))];
+
+  // Create paginated pages
+  return paginate(allPosts, {
+    props: { title, description, permalink, sections },
+    pageSize: 6 // Show 6 posts per page (including featured post)
+  });
+}
+
+const { page, title, description, permalink, sections } = Astro.props;
+const { data: paginatedPosts, currentPage, lastPage } = page;
+
+// Use the first post as featured only on the first page
+const featuredPost = currentPage === 1 && paginatedPosts.length > 0 ? paginatedPosts[0] : null;
+
+// Posts to display (skip the featured post if we're on page 1)
+const postsToDisplay = currentPage === 1 && featuredPost 
+  ? paginatedPosts.slice(1) 
+  : paginatedPosts;
+
+const urlBase = "/blog";
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
   <div class="container">
-    <h1>Luminary ☀</h1>
+    <h1>The Blog</h1>
     
     <!-- Section Navigation -->
     <div class="section-navigation">
@@ -25,34 +47,36 @@ const sections = [...new Set(allPosts.map(post => post.frontmatter.category).fil
       ))}
     </div>
 
-    <!-- Featured Post (First Post) -->
-    {allPosts.length > 0 && (
+    <!-- Featured Post (First Post on page 1 only) -->
+    {featuredPost && (
       <div class="featured-post">
         <h2>Featured Post</h2>
         <div class="post-item featured">
-          {allPosts[0].frontmatter.featuredImage && (
+          {featuredPost.frontmatter.featuredImage && (
             <div class="featured-image-container large">
               <img 
-                src={allPosts[0].frontmatter.featuredImage} 
-                alt={allPosts[0].frontmatter.title}
+                src={featuredPost.frontmatter.featuredImage} 
+                alt={featuredPost.frontmatter.title}
                 class="featured-image"
               />
             </div>
           )}
           <div class="post-content">
             <h2>
-              <a href={`/blog/${allPosts[0].file.split('/').pop().split('.').shift()}`}>{allPosts[0].frontmatter.title}</a>
+              <a href={`/blog/${featuredPost.file.split('/').pop().split('.').shift()}`}>{featuredPost.frontmatter.title}</a>
             </h2>
-            <p>{allPosts[0].frontmatter.description}</p>
+            <p>{featuredPost.frontmatter.description}</p>
             
             <div class="post-meta">
-              {allPosts[0].frontmatter.category && (
-                <span class="category">{allPosts[0].frontmatter.category}</span>
+              {featuredPost.frontmatter.category && (
+                <a href={`/blog/${featuredPost.frontmatter.category.toLowerCase().replace(/\s+/g, '-')}`} class="category">
+                  {featuredPost.frontmatter.category}
+                </a>
               )}
               
-              {allPosts[0].frontmatter.tags && allPosts[0].frontmatter.tags.length > 0 && (
+              {featuredPost.frontmatter.tags && featuredPost.frontmatter.tags.length > 0 && (
                 <div class="tags">
-                  {allPosts[0].frontmatter.tags.map(tag => (
+                  {featuredPost.frontmatter.tags.map(tag => (
                     <span class="tag">{tag}</span>
                   ))}
                 </div>
@@ -60,8 +84,8 @@ const sections = [...new Set(allPosts.map(post => post.frontmatter.category).fil
             </div>
             
             <div class="post-item-footer">
-              <span class="post-item-date">— {allPosts[0].frontmatter.publishDate}</span>
-              <a href={`/blog/${allPosts[0].file.split('/').pop().split('.').shift()}`} class="read-more-btn">Continue Reading</a>
+              <span class="post-item-date">— {featuredPost.frontmatter.publishDate}</span>
+              <a href={`/blog/${featuredPost.file.split('/').pop().split('.').shift()}`} class="read-more-btn">Continue Reading</a>
             </div>
           </div>
         </div>
@@ -69,7 +93,7 @@ const sections = [...new Set(allPosts.map(post => post.frontmatter.category).fil
     )}
 
     <h2>Latest Posts</h2>
-    {allPosts.slice(1).map((post, index) => {
+    {postsToDisplay.map((post, index) => {
       const href = `/blog/${post.file.split('/').pop().split('.').shift()}`;
       return (
         <div>
@@ -115,6 +139,15 @@ const sections = [...new Set(allPosts.map(post => post.frontmatter.category).fil
         </div>
       )
     })}
+
+    {/* Pagination */}
+    {lastPage > 1 && (
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={lastPage} 
+        urlBase={urlBase}
+      />
+    )}
   </div>
 </BaseLayout>
 

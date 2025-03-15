@@ -1,0 +1,27 @@
+---
+// src/pages/blog/[page].astro
+import Pagination from "../../components/Pagination.astro";
+
+const postsPerPage = 5;
+const allPosts = await Astro.glob("../../data/blog-posts/*.md");
+const totalPages = Math.ceil(allPosts.length / postsPerPage);
+
+const { page } = Astro.params;
+const currentPage = parseInt(page, 10);
+
+// Redirect /blog/1 to /blog
+if (currentPage === 1) {
+  Astro.redirect("/blog");
+}
+
+const start = (currentPage - 1) * postsPerPage;
+const paginatedPosts = allPosts.slice(start, start + postsPerPage);
+---
+
+<ul>
+  {paginatedPosts.map(post => (
+    <li><a href={`/blog/${post.file.split('/').pop().replace('.md', '')}`}>{post.frontmatter.title}</a></li>
+  ))}
+</ul>
+
+<Pagination currentPage={currentPage} totalPages={totalPages} urlBase="/blog" />
