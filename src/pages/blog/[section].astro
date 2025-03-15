@@ -1,11 +1,17 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Pagination from '../../components/Pagination.astro';
+import { Image } from 'astro:assets';
 
 export async function getStaticPaths() {
-  const allPosts = await Astro.glob('../../data/blog-posts/*.md');
+  // Only request the necessary fields to improve build performance
+  const allPosts = await Astro.glob('../../data/blog-posts/*.md', {
+    // Select only the properties we need
+    props: ['frontmatter.title', 'frontmatter.description', 'frontmatter.publishDate', 
+            'frontmatter.category', 'frontmatter.tags', 'frontmatter.featuredImage', 'file']
+  });
   
-  // Get unique categories/sections
+  // Get unique categories/sections - do this once to improve performance
   const uniqueSections = [...new Set(allPosts
     .map(post => post.frontmatter.category)
     .filter(Boolean))];
@@ -15,6 +21,9 @@ export async function getStaticPaths() {
   
   // Create paths for each section and page
   const paths = [];
+  
+  // Helper function to get URL slug
+  const getSlug = (fileName) => fileName.split('/').pop().split('.').shift();
   
   uniqueSections.forEach(section => {
     // Filter posts for this section
@@ -31,6 +40,12 @@ export async function getStaticPaths() {
       const end = start + postsPerPage;
       const paginatedPosts = sectionPosts.slice(start, end);
       
+      // Add URL slugs to each post to avoid repetitive computation during rendering
+      const postsWithSlugs = paginatedPosts.map(post => ({
+        ...post,
+        slug: getSlug(post.file)
+      }));
+      
       paths.push({
         params: { 
           section: section.toLowerCase().replace(/\s+/g, '-'),
@@ -38,7 +53,7 @@ export async function getStaticPaths() {
         },
         props: { 
           sectionName: section, 
-          posts: paginatedPosts, 
+          posts: postsWithSlugs, 
           currentPage: page, 
           totalPages: totalPages
         }
@@ -64,17 +79,21 @@ const urlBase = `/blog/${Astro.params.section}`;
     </div>
     
     {posts.map((post, index) => {
-      const href = `/blog/${post.file.split('/').pop().split('.').shift()}`;
+      const href = `/blog/${post.slug}`;
       return (
         <div>
           { index !== 0 && <hr /> }
           <div class="post-item">
             {post.frontmatter.featuredImage && (
               <div class="featured-image-container">
-                <img 
+                <Image 
                   src={post.frontmatter.featuredImage} 
                   alt={post.frontmatter.title}
                   class="featured-image"
+                  width={400}
+                  height={225}
+                  loading={index < 2 ? "eager" : "lazy"}
+                  format="avif"
                 />
               </div>
             )}
@@ -89,15 +108,20 @@ const urlBase = `/blog/${Astro.params.section}`;
                 
                 {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
                   <div class="tags">
-                    {post.frontmatter.tags.map(tag => (
+                    {post.frontmatter.tags.slice(0, 3).map(tag => (
                       <span class="tag">{tag}</span>
                     ))}
+                    {post.frontmatter.tags.length > 3 && <span class="tag">+{post.frontmatter.tags.length - 3}</span>}
                   </div>
                 )}
               </div>
               
               <div class="post-item-footer">
-                <span class="post-item-date">— {post.frontmatter.publishDate}</span>
+                <span class="post-item-date">— {new Date(post.frontmatter.publishDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}</span>
                 <a href={href} class="read-more-btn">Continue Reading</a>
               </div>
             </div>
@@ -119,6 +143,80 @@ const urlBase = `/blog/${Astro.params.section}`;
     )}
   </div>
 </BaseLayout>
+
+<style>
+  /* Critical CSS for faster rendering */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .section-header {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .back-to-blog {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .back-to-blog:hover {
+    color: #333;
+  }
+  
+  .post-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .post-item {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+    
+    .section-header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+  
+  .featured-image-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    aspect-ratio: 16/9;
+  }
+  
+  .featured-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  hr {
+    border: 0;
+    height: 1px;
+    background-color: #eee;
+    margin: 2rem 0;
+  }
+  
+  .no-posts {
+    text-align: center;
+    padding: 3rem 0;
+  }
+</style>
 
 <style>
   h2,

@@ -1,205 +1,35 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Pagination from '../../components/Pagination.astro';
-import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
-const title = "Luminary ☀ | Blog";
-const description = 'Latest articles on News, Tech and Science, Trailers, and Deals.';
-const permalink = `${Astro.site.href}blog`;
-
-// Optimize data fetching - only get what's needed for the current page
-const allPostsMetadata = await Astro.glob('../../data/blog-posts/*.md', { 
-  // Fetch only the necessary frontmatter properties
-  props: ['frontmatter.title', 'frontmatter.description', 'frontmatter.publishDate', 
-          'frontmatter.category', 'frontmatter.tags', 'frontmatter.featuredImage', 'file'] 
-});
-
-const sortedPosts = allPostsMetadata.sort((a, b) => 
-  new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf()
-);
-
-// Pagination settings
-const postsPerPage = 10;
-const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
-const currentPage = 1; // Index page is always page 1
-const paginatedPosts = sortedPosts.slice(0, postsPerPage);
-
-// Get unique sections from posts - do this once and memoize
-const sections = [...new Set(sortedPosts.map(post => post.frontmatter.category).filter(Boolean))];
-
-// Helper function to get post URL
-const getPostUrl = (post) => `/blog/${post.file.split('/').pop().split('.').shift()}`;
+const title = "Luminary ☀";
+const description = 'Luminary ☀ is your go-to destination for engaging content from across news, tech inovations and scienctific discoveries, movie trailers and the best deals online. We aim to aspire, inform and connect curious minds with the world around them 😉.';
+const permalink = Astro.site.href;
 ---
 
-<BaseLayout title={title} description={description} permalink={permalink} current="blog">
-  <div class="container">
-    <h1>The Blog</h1>
-    
-    <!-- Section Navigation -->
-    <div class="section-navigation">
-      {sections.map(section => (
-        <a href={`/blog/${section.toLowerCase().replace(/\s+/g, '-')}`} class="section-link">
-          {section}
-        </a>
-      ))}
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="home-container">
+    <div class="home-copy">
+      <h1>Welcome to Luminary ☀</h1>
+      <p>your go-to destination for engaging content from across news, tech inovations and scienctific discoveries, movie trailers and the best deals online. We aim to aspire, inform and connect curious minds with the world around them 😉.</p>
+      <p>Check out the docs on <a href="https://www.github.com/Charca/astro-blog-template" target="_blank" rel="noopener">GitHub</a> to get started.</p>
     </div>
 
-    <!-- Featured Post (First Post) -->
-    {paginatedPosts.length > 0 && (
-      <div class="featured-post">
-        <h2>Featured Post</h2>
-        <div class="post-item featured">
-          {paginatedPosts[0].frontmatter.featuredImage && (
-            <div class="featured-image-container large">
-              <!-- Use Astro's Image component for automatic optimization -->
-              <Image 
-                src={paginatedPosts[0].frontmatter.featuredImage} 
-                alt={paginatedPosts[0].frontmatter.title}
-                class="featured-image"
-                width={800}
-                height={450}
-                loading="eager" 
-                format="avif"
-              />
-            </div>
-          )}
-          <div class="post-content">
-            <h2>
-              <a href={getPostUrl(paginatedPosts[0])}>{paginatedPosts[0].frontmatter.title}</a>
-            </h2>
-            <p>{paginatedPosts[0].frontmatter.description}</p>
-            
-            <div class="post-meta">
-              {paginatedPosts[0].frontmatter.category && (
-                <span class="category">{paginatedPosts[0].frontmatter.category}</span>
-              )}
-              
-              {paginatedPosts[0].frontmatter.tags && paginatedPosts[0].frontmatter.tags.length > 0 && (
-                <div class="tags">
-                  {paginatedPosts[0].frontmatter.tags.map(tag => (
-                    <span class="tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            <div class="post-item-footer">
-              <span class="post-item-date">— {new Date(paginatedPosts[0].frontmatter.publishDate).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}</span>
-              <a href={getPostUrl(paginatedPosts[0])} class="read-more-btn">Continue Reading</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-
-    <h2>Latest Posts</h2>
-    {paginatedPosts.slice(1).map((post, index) => {
-      const href = getPostUrl(post);
-      return (
-        <div>
-          { index !== 0 && <hr /> }
-          <div class="post-item">
-            {post.frontmatter.featuredImage && (
-              <div class="featured-image-container">
-                <!-- Use Astro's Image component with lazy loading for below-the-fold images -->
-                <Image 
-                  src={post.frontmatter.featuredImage} 
-                  alt={post.frontmatter.title}
-                  class="featured-image"
-                  width={400}
-                  height={225}
-                  loading="lazy" 
-                  format="avif"
-                />
-              </div>
-            )}
-            <div class="post-content">
-              <h2>
-                <a href={href}>{post.frontmatter.title}</a>
-              </h2>
-              <p>{post.frontmatter.description}</p>
-              
-              <div class="post-meta">
-                {post.frontmatter.category && (
-                  <a href={`/blog/${post.frontmatter.category.toLowerCase().replace(/\s+/g, '-')}`} class="category">
-                    {post.frontmatter.category}
-                  </a>
-                )}
-                
-                {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
-                  <div class="tags">
-                    {post.frontmatter.tags.slice(0, 3).map(tag => (
-                      <span class="tag">{tag}</span>
-                    ))}
-                    {post.frontmatter.tags.length > 3 && <span class="tag">+{post.frontmatter.tags.length - 3}</span>}
-                  </div>
-                )}
-              </div>
-              
-              <div class="post-item-footer">
-                <span class="post-item-date">— {new Date(post.frontmatter.publishDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}</span>
-                <a href={href} class="read-more-btn">Continue Reading</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    })}
-    
-    <!-- Pagination Component -->
-    {totalPages > 1 && (
-      <Pagination currentPage={currentPage} totalPages={totalPages} urlBase="/blog" />
-    )}
+    <div class="hero-image-container">
+      <picture>
+        <source srcset="/assets/home-illustration.webp" media="(min-width: 600px)">
+        <img class="hero-image" alt="Illustration of person reading a book" src="/assets/home-illustration-small.webp" width="550" height="466">
+      </picture>
+      <p class="caption">
+        Illustration by
+        <a href="https://icons8.com/illustrations/author/5c07e68d82bcbc0092519bb6" target="_blank" rel="noopener">Icons 8</a>
+        from
+        <a href="https://icons8.com/illustrations" target="_blank" rel="noopener">Ouch!</a>
+      </p>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
-
-  .container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-  
-  .featured-post {
-    margin-bottom: 2rem;
-  }
-  
-  .post-item {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  @media (min-width: 768px) {
-    .post-item {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    }
-  }
-  
-  .featured-image-container {
-    width: 100%;
-    overflow: hidden;
-    border-radius: 8px;
-    aspect-ratio: 16/9;
-  }
-  
-  .featured-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
   .home-container {
     align-items: center;
     display: flex;
