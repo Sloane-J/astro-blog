@@ -1,6 +1,12 @@
 ---
 import SearchComponent from "../components/AstroSearch.astro";
 import BaseLayout from "../layouts/BaseLayout.astro"
+
+const title = 'Search';
+const description = 'Search any post, tag, category or author';
+const permalink = Astro.site 
+  ? new URL('/search', Astro.site).href 
+  : '/search';
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="search">
