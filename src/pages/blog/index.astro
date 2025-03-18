@@ -172,7 +172,7 @@ const getPostUrl = (post: BlogPost) => {
                   month: 'long',
                   day: 'numeric'
                 })}</span>
-                <a href={href} class="read-more-btn">Continue Reading</a>
+                <a href={`${href}#disqus_thread`} class="read-more-btn">Continue Reading</a>
               </div>
             </div>
           </div>
@@ -183,6 +183,8 @@ const getPostUrl = (post: BlogPost) => {
     {totalPages > 1 && (
       <Pagination currentPage={currentPage} totalPages={totalPages} urlBase="/blog" />
     )}
+    <!-- Disqus Comment Count Script -->
+    <script id="dsq-count-scr" src="//luminary-1.disqus.com/count.js" async></script>
   </div>
 </BaseLayout>
 
