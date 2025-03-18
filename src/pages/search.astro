@@ -1,5 +1,10 @@
 ---
 import SearchComponent from "../components/AstroSearch.astro";
+import BaseLayout from "../layouts/BaseLayout.astro"
 ---
 
+<BaseLayout title={title} description={description} permalink={permalink} current="search">
+
 <SearchComponent id="search" className="pagefind-ui" uiOptions={{ showImages: false }} />
+
+</BaseLayout>

@@ -1,11 +1,9 @@
 # pagefind.yml
-source: dist
-bundle_dir: pagefind
+site: dist
+output_subdir: pagefind
 excludes:
   - 404
   - admin/*
   - api/*
-site_url: https://localhost:4321 # Replace with your actual site URL
-# pagefind.yml
-site: dist
+site_url: https://myastro-blogg.netlify.app # Replace with your actual site URL
 glob: "**/*.{html}"
