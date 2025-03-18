@@ -4,66 +4,74 @@ import Pagination from '../../components/Pagination.astro';
 import { Image } from 'astro:assets';
 
 export async function getStaticPaths() {
-  // Only request the necessary fields to improve build performance
-  const allPosts = await Astro.glob('../../data/blog-posts/*.md', {
-    // Select only the properties we need
-    props: ['frontmatter.title', 'frontmatter.description', 'frontmatter.publishDate', 
-            'frontmatter.category', 'frontmatter.tags', 'frontmatter.featuredImage', 'file']
+  // Import markdown files eagerly
+  const postModules = import.meta.glob('../../data/blog-posts/*.md', { eager: true });
+
+  // Helper: Extract slug from file path
+  const getSlug = (filePath: string) => {
+    const parts = filePath.split('/');
+    const fileName = parts[parts.length - 1];
+    return fileName.replace(/\.md$/, '');
+  };
+
+  // Transform imported modules to post objects
+  const allPosts = Object.entries(postModules).map(([path, mod]: [string, any]) => {
+    const { frontmatter } = mod;
+    return {
+      title: frontmatter.title,
+      description: frontmatter.description,
+      publishDate: frontmatter.publishDate,
+      category: frontmatter.category,
+      tags: frontmatter.tags,
+      featuredImage: frontmatter.featuredImage,
+      slug: getSlug(path)
+    };
   });
-  
-  // Get unique categories/sections - do this once to improve performance
+
+  // Get unique categories
   const uniqueSections = [...new Set(allPosts
-    .map(post => post.frontmatter.category)
+    .map(post => post.category)
     .filter(Boolean))];
-  
-  // Pagination settings
+
   const postsPerPage = 10;
-  
-  // Create paths for each section and page
   const paths = [];
-  
-  // Helper function to get URL slug
-  const getSlug = (fileName) => fileName.split('/').pop().split('.').shift();
-  
+
   uniqueSections.forEach(section => {
-    // Filter posts for this section
+    // Filter posts by category
     const sectionPosts = allPosts
-      .filter(post => post.frontmatter.category === section)
-      .sort((a, b) => new Date(b.frontmatter.publishDate).valueOf() - new Date(a.frontmatter.publishDate).valueOf());
-    
-    // Calculate total pages for this section
+      .filter(post => post.category === section)
+      .sort((a, b) => new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf());
+
+    // Calculate total pages
     const totalPages = Math.ceil(sectionPosts.length / postsPerPage);
-    
-    // Create a path for each page in this section
+
+    // Create paths for each page
     for (let page = 1; page <= totalPages; page++) {
       const start = (page - 1) * postsPerPage;
       const end = start + postsPerPage;
       const paginatedPosts = sectionPosts.slice(start, end);
-      
-      // Add URL slugs to each post to avoid repetitive computation during rendering
-      const postsWithSlugs = paginatedPosts.map(post => ({
-        ...post,
-        slug: getSlug(post.file)
-      }));
-      
+
+      const params: Record<string, string> = {
+        section: section.toLowerCase().replace(/\s+/g, '-')
+      };
+      if (page > 1) params.page = String(page);
+
       paths.push({
-        params: { 
-          section: section.toLowerCase().replace(/\s+/g, '-'),
-          page: page === 1 ? undefined : String(page)
-        },
-        props: { 
-          sectionName: section, 
-          posts: postsWithSlugs, 
-          currentPage: page, 
-          totalPages: totalPages
+        params,
+        props: {
+          sectionName: section,
+          posts: paginatedPosts,
+          currentPage: page,
+          totalPages
         }
       });
     }
   });
-  
+
   return paths;
 }
 
+// === Get props passed from getStaticPaths ===
 const { sectionName, posts, currentPage, totalPages } = Astro.props;
 const title = `Luminary ☀ | ${sectionName}`;
 const description = `Latest articles in ${sectionName}`;
@@ -84,40 +92,40 @@ const urlBase = `/blog/${Astro.params.section}`;
         <div>
           { index !== 0 && <hr /> }
           <div class="post-item">
-            {post.frontmatter.featuredImage && (
+            {post.featuredImage && (
               <div class="featured-image-container">
                 <Image 
-                  src={post.frontmatter.featuredImage} 
-                  alt={post.frontmatter.title}
+                  src={post.featuredImage} 
+                  alt={post.title}
                   class="featured-image"
                   width={400}
                   height={225}
                   loading={index < 2 ? "eager" : "lazy"}
-                  format="avif"
+                  format="webp"
                 />
               </div>
             )}
             <div class="post-content">
               <h2>
-                <a href={href}>{post.frontmatter.title}</a>
+                <a href={href}>{post.title}</a>
               </h2>
-              <p>{post.frontmatter.description}</p>
+              <p>{post.description}</p>
               
               <div class="post-meta">
                 <span class="category">{sectionName}</span>
                 
-                {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+                {post.tags && post.tags.length > 0 && (
                   <div class="tags">
-                    {post.frontmatter.tags.slice(0, 3).map(tag => (
+                    {post.tags.slice(0, 3).map(tag => (
                       <span class="tag">{tag}</span>
                     ))}
-                    {post.frontmatter.tags.length > 3 && <span class="tag">+{post.frontmatter.tags.length - 3}</span>}
+                    {post.tags.length > 3 && <span class="tag">+{post.tags.length - 3}</span>}
                   </div>
                 )}
               </div>
               
               <div class="post-item-footer">
-                <span class="post-item-date">— {new Date(post.frontmatter.publishDate).toLocaleDateString('en-US', {
+                <span class="post-item-date">— {new Date(post.publishDate).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'

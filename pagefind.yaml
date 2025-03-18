@@ -1,0 +1,11 @@
+# pagefind.yml
+source: dist
+bundle_dir: pagefind
+excludes:
+  - 404
+  - admin/*
+  - api/*
+site_url: https://localhost:4321 # Replace with your actual site URL
+# pagefind.yml
+site: dist
+glob: "**/*.{html}"

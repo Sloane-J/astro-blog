@@ -6,7 +6,7 @@ description: >-
   creators.
 date: 2025-03-14T00:00:00.000Z
 publishDate: 'March 14, 2025'
-featuredImage: /images/blog/nvidia-gpu-2025.jpg
+featuredImage: /assets/blog/casual-life-3d-meditation-crystal.webp
 author: Samuel D. Jnr
 category: Tech and Science
 tags:

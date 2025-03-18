@@ -7,7 +7,7 @@ import rehypeExternalLinks from 'rehype-external-links';
 import tailwind from "@astrojs/tailwind";
 import compress from "astro-compress";
 import sitemap from "@astrojs/sitemap";
-import prefetch from "@astrojs/prefetch";
+import pagefind from "astro-pagefind";
 
 // https://astro.build/config
 export default defineConfig({
@@ -23,11 +23,8 @@ export default defineConfig({
   
   // Build options for performance
   build: {
-    // Enable inlining of smaller assets
     inlineStylesheets: 'auto',
-    // Use browser-compatible JS for wider support
     format: 'file',
-    // Add cache busting for assets
     assets: '_assets',
   },
   
@@ -36,49 +33,40 @@ export default defineConfig({
     service: {
       entrypoint: 'astro/assets/services/sharp',
     },
-    // Disable remote images caching in dev for faster builds
     remotePatterns: [{ protocol: "https" }],
   },
   
   vite: {
-    // Enable build optimizations
     build: {
-      // Optimize CSS
       cssMinify: 'lightningcss',
-      // Split chunks for better caching
       cssCodeSplit: true,
-      // Reduce bundle size
       minify: 'terser',
-      // Optimize Svelte components
       rollupOptions: {
         output: {
-          manualChunks: {
-            svelte: ['svelte'],
-          },
+          // Updated to prevent empty chunks
+          manualChunks: undefined
         },
       },
     },
-    // Enable caching in development
     optimizeDeps: {
       enabled: true,
     },
-    // Add compression for assets
     plugins: [],
     ssr: {
-      // Avoid bundling external dependencies in SSR
       noExternal: [],
     },
   },
+  
+  // Enable built-in prefetching
+  prefetch: true,
   
   // Add key integrations
   integrations: [
     mdx(), 
     svelte(), 
     tailwind({
-      // Add Just-in-Time mode for smaller CSS bundles
       config: { applyBaseStyles: false },
     }),
-    // Add compression for HTML, CSS, JS, images
     compress({
       CSS: true,
       HTML: true,
@@ -86,17 +74,36 @@ export default defineConfig({
       JavaScript: true,
       SVG: true,
     }),
-    // Generate sitemap for better SEO
     sitemap(),
-    // Add prefetching for faster page loads
-    prefetch(),
+    pagefind({
+      // Configuration options for Pagefind
+      exclude: ["**/admin/**/*"],
+      indexing: {
+        // Specify which extensions to index
+        extensions: [".md", ".astro", ".html"],
+        // Adjust what HTML elements should be used for search results
+        selectors: {
+          article: "article", // The main content area
+          header: "header h1", // The title of the page
+          body: "main", // The main content
+          image: "img", // Images
+          meta: "meta", // Meta tags
+        },
+      },
+      // Customize output
+      customIcons: false,
+      customSvg: {
+        // Customize icons if needed
+        // search: "<svg>...</svg>",
+        // close: "<svg>...</svg>",
+      }
+    })
   ],
   
   // Markdown configuration
   markdown: {
     shikiConfig: {
       theme: 'nord',
-      // Wrap code blocks with divs for better mobile experience
       wrap: true,
     },
     remarkPlugins: [remarkGfm, remarkSmartypants],

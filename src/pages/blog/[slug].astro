@@ -1,12 +1,29 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+
+// Define interface for post data structure
+interface BlogPost {
+  frontmatter: {
+    title: string;
+    description: string;
+    publishDate: string;
+    author?: string;
+    category?: string;
+    tags?: string[];
+    featuredImage?: any;
+  };
+  file: string;
+  Content: any;
+}
 
 // Define getStaticPaths function for dynamic routes
 export async function getStaticPaths() {
-  const allPosts = await Astro.glob('../../data/blog-posts/*.md');
+  // Only fetch required properties for routing to improve build performance
+  const allPosts = await Astro.glob<BlogPost>('../../data/blog-posts/*.md');
   
   return allPosts.map((post) => {
-    const slug = post.file.split('/').pop().split('.').shift();
+    const slug = post.file.split('/').pop()?.split('.').shift() || '';
     return {
       params: { slug },
       props: { post },
@@ -18,19 +35,26 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 
 // Extract and prepare meta data more efficiently
-const { frontmatter } = post;
-const { title, description, publishDate, category, tags, featuredImage } = frontmatter;
-const slug = post.file.split('/').pop().split('.').shift();
+const { title, description, publishDate, author, category, tags, featuredImage } = post.frontmatter;
+const slug = post.file.split('/').pop()?.split('.').shift() || '';
 const permalink = `${Astro.site.href}blog/${slug}`;
 
-// Remove console.log in production
+// Format the publish date for better readability
+const formattedDate = new Date(publishDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
 ---
 
 <BaseLayout title={title} description={description} permalink={permalink} current="blog">
   <div class="container">
     <header class="post-header">
       <h1>{title}</h1>
-      <time class="post-date" datetime={publishDate}>{publishDate}</time>
+      <div class="post-byline">
+        {author && <span class="post-author">by {author}</span>}
+        <time class="post-date" datetime={publishDate}>{formattedDate}</time>
+      </div>
       
       {(category || (tags && tags.length > 0)) && (
         <div class="post-meta">
@@ -47,7 +71,16 @@ const permalink = `${Astro.site.href}blog/${slug}`;
     
     {featuredImage && (
       <div class="featured-image-container">
-        <img src={featuredImage} alt={title} class="featured-image" loading="lazy" />
+        <!-- Use Astro's Image component for automatic optimization -->
+        <Image 
+          src={featuredImage} 
+          alt={title} 
+          class="featured-image" 
+          width={800} 
+          height={450} 
+          loading="lazy" 
+          format="webp"
+        />
       </div>
     )}
     
@@ -62,25 +95,52 @@ const permalink = `${Astro.site.href}blog/${slug}`;
 </BaseLayout>
 
 <style>
+  /* Container width to match index page */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  
   .post-header {
     margin-bottom: 2rem;
   }
   
-  .post-date {
-    display: block;
-    color: var(--text-secondary);
+  h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
     margin-bottom: 1rem;
+    font-weight: 700;
+  }
+  
+  .post-byline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+  
+  .post-author {
+    font-weight: 500;
+  }
+  
+  .post-date {
+    display: inline-block;
   }
   
   .featured-image-container {
     margin: 2rem 0;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures the image border-radius is applied */
   }
   
   .featured-image {
     width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 8px;
+    height: auto; /* Let aspect ratio be maintained by Image component */
+    display: block; /* Removes bottom space */
   }
   
   .post-meta {
@@ -88,6 +148,7 @@ const permalink = `${Astro.site.href}blog/${slug}`;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 15px;
+    align-items: center;
   }
   
   .category {
@@ -98,6 +159,7 @@ const permalink = `${Astro.site.href}blog/${slug}`;
     font-size: 0.85rem;
     font-weight: 500;
     text-decoration: none;
+    display: inline-block;
   }
   
   .tags {
@@ -117,6 +179,22 @@ const permalink = `${Astro.site.href}blog/${slug}`;
   
   .content {
     margin: 2rem 0;
+    /* Content width for better readability */
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  
+  /* Responsive typography */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .content {
+      font-size: 1rem;
+    }
   }
   
   .back-link {
@@ -124,17 +202,20 @@ const permalink = `${Astro.site.href}blog/${slug}`;
   }
   
   .back-link a {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     padding: 0.5rem 1rem;
     color: var(--text-secondary);
     text-decoration: none;
     border: 1px solid var(--text-secondary);
     border-radius: 4px;
     transition: all 0.2s ease;
+    font-weight: 500;
   }
   
   .back-link a:hover {
     color: var(--primary-color);
     border-color: var(--primary-color);
+    transform: translateX(-3px);
   }
 </style>

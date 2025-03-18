@@ -1,15 +1,66 @@
 {
   "compilerOptions": {
-    // Enable top-level await, and other modern ESM features.
-    "target": "ESNext",
-    "module": "ESNext",
-    // Enable node-style module resolution, for things like npm package imports.
+    // Enable modern JavaScript features.
+    "target": "ESNext", // Target the latest JavaScript version.
+    "module": "ESNext", // Use ESNext modules for better compatibility with modern tools.
+    
+    // Ensure proper module resolution (use node-style resolution for package imports).
     "moduleResolution": "node",
-    // Enable JSON imports.
+    
+    // Allow importing JSON files.
     "resolveJsonModule": true,
-    // Enable stricter transpilation for better output.
+    
+    // Enable top-level await support.
+    "experimentalDecorators": true, // Useful for certain libraries or frameworks (like decorators).
+    "esModuleInterop": true, // Ensures compatibility between CommonJS and ESM modules.
+    
+    // Enable strict mode to ensure better type-checking.
+    "strict": true, // Enabling all strict type-checking options for better development safety.
+    
+    // Ensure module imports are correct (ensure proper type-checking).
+    "skipLibCheck": true, // Skips checking declaration files (speeds up compilation, safe for most use cases).
+
+    // Allow for strict transpilation and compatibility with Astro's runtime.
     "isolatedModules": true,
-    // Astro will directly run your TypeScript code, no transpilation needed.
-    "noEmit": true
-  }
+    "noEmit": true, // Prevents emitting any files because Astro will handle compilation directly.
+    
+    // Enable synthetic default imports to support both CommonJS and ESModule imports.
+    "allowSyntheticDefaultImports": true,
+    
+    // Include any missing or deprecated types for the development environment.
+    "typeRoots": ["./node_modules/@types", "./src/types"], // Customize where to look for types.
+    
+    // Enable strict checks on `null` or `undefined` values.
+    "strictNullChecks": true,
+    
+    // Adds support for importing .d.ts files in TypeScript.
+    "skipDefaultLibCheck": true, 
+    
+    // Ensure type-checking is done for all code including the imports.
+    "noUnusedLocals": true, // Report unused variables.
+    "noUnusedParameters": true, // Report unused function parameters.
+    
+    // Keep the `allowJs` flag false, as we don't want to mix JS and TS files.
+    "allowJs": false
+  },
+  
+  // Include files or directories that should be included in the TypeScript project.
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "src/**/*.json",
+    "src/**/*.md"
+  ],
+  
+  // Specify the types to be included in the project.
+  "typeAcquisition": {
+    "include": ["node"]
+  },
+
+  // Specify the paths to the Astro configuration files and any types needed for Astro.
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
