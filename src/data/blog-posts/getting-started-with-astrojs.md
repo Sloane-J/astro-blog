@@ -19,6 +19,8 @@ keywords:
   - partial hydration
 title: 'Getting Started with Astro: A Modern Web Framework'
 date: 2025-03-11T00:00:00.000Z
+comments: true
+draft: false
 ---
 
 # Getting Started with Astro: A Modern Web Framework

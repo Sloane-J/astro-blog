@@ -19,6 +19,8 @@ keywords:
   - Web Development
   - Static Site Generation
 Reading time: 5 minutes
+comments: true
+draft: false
 ---
 
 let me just write something here

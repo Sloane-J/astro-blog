@@ -17,6 +17,7 @@ tags:
 featured: true
 keywords:
   - Nvidia
+comments: true
 ---
 
 # NVIDIA's New Gaming GPU: The Revolution is Here

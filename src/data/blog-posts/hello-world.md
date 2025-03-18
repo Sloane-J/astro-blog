@@ -6,6 +6,8 @@ featuredImage: /assets/blog/casual-life-3d-meditation-crystal.webp
 category: "News"
 tags: ["Ready", "Blank Page"]
 keywords: ["astro framework", "static site generator", "web performance", "islands architecture", "component-based", "partial hydration"]
+comments: true
+draft: false
 ---
 
 ![Illustration of woman using a meditation app](/assets/blog/casual-life-3d-meditation-crystal.webp)

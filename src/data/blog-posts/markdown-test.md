@@ -20,6 +20,8 @@ keywords:
   - partial hydration
 title: Markdown Test Page
 date: 2024-11-24T00:00:00.000Z
+comments: true
+draft: false
 ---
 
 This page is an adapted version of [markdown-test-page](https://github.com/fullpipe/markdown-test-page). It should give you an idea of how different elements are styled on this template.
