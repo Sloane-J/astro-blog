@@ -13,21 +13,21 @@ import pagefind from "astro-pagefind";
 export default defineConfig({
   // Set output to static for better performance
   output: 'static',
-
+  
   // Standard directories
   outDir: './dist',
   publicDir: './public',
-
+  
   // Your site URL
   site: 'https://myastro-blogg.netlify.app',
-
+  
   // Build options for performance
   build: {
     inlineStylesheets: 'auto',
     format: 'file',
     assets: '_assets',
   },
-
+  
   // Enable image optimization
   image: {
     service: {
@@ -35,44 +35,31 @@ export default defineConfig({
     },
     remotePatterns: [{ protocol: "https" }],
   },
-
+  
   vite: {
     build: {
       cssMinify: 'lightningcss',
       cssCodeSplit: true,
-      minify: 'terser', // Use terser for efficient minification
+      minify: 'terser',
       rollupOptions: {
         output: {
           // Updated to prevent empty chunks
           manualChunks: undefined
         },
       },
-      sourcemap: true, // Generate source maps for debugging
     },
     optimizeDeps: {
-      include: ['react', 'react-dom'], // Pre-bundle heavy dependencies
-      exclude: ['unnecessary-package'], // Exclude unused dependencies
+      enabled: true,
     },
-    server: {
-      port: 3000, // Set custom dev server port
-      https: false, // Enable if HTTPS is required
-    },
-    css: {
-      postcss: {
-        plugins: [require('autoprefixer')], // Add autoprefixing for browser compatibility
-      },
-    },
-    plugins: [
-      // Include Vite plugins if needed, e.g., @vitejs/plugin-react
-    ],
+    plugins: [],
     ssr: {
-      noExternal: [], // Add external packages if SSR is in use
+      noExternal: [],
     },
   },
-
+  
   // Enable built-in prefetching
   prefetch: true,
-
+  
   // Add key integrations
   integrations: [
     mdx(), 
@@ -112,12 +99,28 @@ export default defineConfig({
       }
     })
   ],
-
+  
   // Markdown configuration
   markdown: {
     shikiConfig: {
-      theme: 'nord',
+      // Updated theme with custom color for syntax highlighting
+      theme: {
+        name: 'custom-theme',
+        extends: 'nord',
+        colors: {
+          'string': '#548e9b',
+          'comment': '#616e88',
+          'keyword': '#81a1c1',
+          'function': '#88c0d0'
+        }
+      },
       wrap: true,
+      langs: [
+        'js', 'ts', 'html', 'css', 'jsx', 'tsx', 'json', 'md',
+        'yaml', 'scss', 'python', 'php', 'ruby', 'java', 'csharp',
+        'go', 'rust', 'sql', 'bash', 'dockerfile', 'graphql',
+        'vue', 'svelte', 'astro'
+      ],
     },
     remarkPlugins: [remarkGfm, remarkSmartypants],
     rehypePlugins: [
