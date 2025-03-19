@@ -46,3 +46,29 @@ flowchart TD
 ```
 
 ![](</assets/blog/images/HTU STUDENT LOGINS.jpg>)
+
+```js
+// Javascript code with syntax highlighting.
+var fun = function lang(l) {
+  dateformat.i18n = require('./lang/' + l);
+  return true;
+};
+```
+
+ <h1>Welcome</h1>
+
+
+## JavaScript Example
+
+```js
+// This is a test function
+const greet = (name) => {
+  const message = `Hello, ${name}!`;
+  console.log(message);
+  return message;
+};
+
+// Using string literals with your custom color
+const html = `<div class="container">
+  <h1>Welcome</h1>
+</div>`;

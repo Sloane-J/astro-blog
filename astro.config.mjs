@@ -8,6 +8,8 @@ import tailwind from "@astrojs/tailwind";
 import compress from "astro-compress";
 import sitemap from "@astrojs/sitemap";
 import pagefind from "astro-pagefind";
+//import { getHighlighter } from 'shiki';
+import tailwindcss from '@astrojs/tailwind';
 
 // https://astro.build/config
 export default defineConfig({
@@ -99,21 +101,19 @@ export default defineConfig({
       }
     })
   ],
+
+  /* markdown: {
+    shikiConfig: {
+      theme: 'dracula',
+    },
+  }, */
   
   // Markdown configuration
   markdown: {
+    syntaxHighlight: 'shiki',
     shikiConfig: {
-      // Updated theme with custom color for syntax highlighting
-      theme: {
-        name: 'custom-theme',
-        extends: 'nord',
-        colors: {
-          'string': '#548e9b',
-          'comment': '#616e88',
-          'keyword': '#81a1c1',
-          'function': '#88c0d0'
-        }
-      },
+      // Use a more direct approach for customizing the theme
+      theme: 'dracula',
       wrap: true,
       langs: [
         'js', 'ts', 'html', 'css', 'jsx', 'tsx', 'json', 'md',
@@ -121,6 +121,18 @@ export default defineConfig({
         'go', 'rust', 'sql', 'bash', 'dockerfile', 'graphql',
         'vue', 'svelte', 'astro'
       ],
+      // Use a transformer to modify the highlighted tokens
+      transformers: [{
+        code(node) {
+          // Find string tokens and apply your custom color
+          node.children.forEach(child => {
+            if (child.type === 'element' && child.properties?.class?.includes('string')) {
+              child.properties.style = `color: #548e9b;`;
+            }
+          });
+          return node;
+        }
+      }]
     },
     remarkPlugins: [remarkGfm, remarkSmartypants],
     rehypePlugins: [
