@@ -20,7 +20,7 @@ export default defineConfig({
   publicDir: './public',
   
   // Your site URL
-  site: 'https://myastro-blogg.netlify.app',
+  site: 'https://iztar.netlify.app',
   
   // Build options for performance
   build: {

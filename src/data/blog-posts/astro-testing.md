@@ -54,15 +54,10 @@ var fun = function lang(l) {
   return true;
 };
 ```
-
-<span class="token keyword">function</span> 
-<span class="token string">"hello world"</span>;
-
-<div class="social-sharing">
-  <a href="https://twitter.com/intent/tweet?text=Check%20out%20this%20blog%20post!&url=https://example.com/seo-tips" target="_blank">Share on Twitter</a>
-  <a href="https://www.facebook.com/sharer/sharer.php?u=https://example.com/seo-tips" target="_blank">Share on Facebook</a>
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://example.com/seo-tips&title=SEO%20Tips" target="_blank">Share on LinkedIn</a>
-</div>
+<figure>
+  <img src="/assets/blog/images/HTU STUDENT LOGINS.jpg" alt="A breathtaking sunset over the ocean with vibrant orange hues" />
+  <caption>A serene sunset over the ocean captured in vibrant colors.</caption>
+</figure>
 
 ## JavaScript Example
 

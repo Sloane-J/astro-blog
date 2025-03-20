@@ -23,7 +23,6 @@ comments: true
 draft: false
 ---
 
-# Getting Started with Astro: A Modern Web Framework
 
 **Astro** has been gaining significant traction among developers looking for a faster way to build content-focused websites. Unlike traditional JavaScript frameworks that send large JS bundles to the client, Astro takes a different approach.
 

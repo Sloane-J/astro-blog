@@ -5,5 +5,5 @@ excludes:
   - 404
   - admin/*
   - api/*
-site_url: https://myastro-blogg.netlify.app # Replace with your actual site URL
+site_url: https://iztar.netlify.app # Replace with your actual site URL
 glob: "**/*.{html}"

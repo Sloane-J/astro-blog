@@ -1,0 +1,157 @@
+---
+// src/pages/404.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 - Page Not Found">
+  <div class="error-container">
+    <div class="error-content">
+      <h1 class="error-code">404</h1>
+      <p class="error-message">Page not found</p>
+      <div class="error-description">
+        The page you're looking for doesn't exist or has been moved.
+      </div>
+      <div class="error-actions">
+        <a href="/" class="btn">
+          <span>Home</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+        <a href="/blog" class="btn">
+          <span>Blog</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: inherit; /* Matte black */
+    color: #ffffff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 600px;
+    padding: 2rem;
+  }
+
+  .error-code {
+    font-size: 15rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    background: linear-gradient(90deg, #555555, #333333);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    position: relative;
+    letter-spacing: -0.05em;
+  }
+
+  .error-message {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .error-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #999999;
+    margin-bottom: 3rem;
+    max-width: 400px;
+  }
+
+  .error-actions {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.75rem;
+    background-color: #1a1a1a;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    color: #ffffff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn svg {
+    transition: transform 0.3s ease;
+  }
+
+  .btn:hover {
+    background-color: #222222;
+    border-color: #555555;
+  }
+
+  .btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    background-color: #555555;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+  }
+
+  .btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  @media (max-width: 768px) {
+    .error-code {
+      font-size: 10rem;
+    }
+    
+    .error-message {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .error-code {
+      font-size: 7rem;
+    }
+    
+    .error-message {
+      font-size: 1.5rem;
+    }
+    
+    .error-actions {
+      flex-direction: column;
+    }
+  }
+</style>
