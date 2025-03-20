@@ -3,7 +3,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Pagination from "../../components/Pagination.astro";
 
-export async function getStaticPaths() {
+export async function getStaticPaths({ paginate }) {
   const postsPerPage = 5;
   
   // Use import.meta.glob with { eager: true } to get the content immediately
@@ -24,38 +24,22 @@ export async function getStaticPaths() {
     new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf()
   );
   
-  const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
-  
-  // Create an array for each page
-  return Array.from({ length: totalPages }).map((_, i) => {
-    const pageNum = i + 1;
-    const start = i * postsPerPage;
-    const paginatedPosts = sortedPosts.slice(start, start + postsPerPage);
-    
-    // Skip page 1 as it's handled by /blog/index.astro
-    if (pageNum === 1) {
-      return null;
-    }
-    
-    return {
-      params: { page: String(pageNum) },
-      props: { paginatedPosts, currentPage: pageNum, totalPages }
-    };
-  }).filter(page => page !== null); // Filter out null values (page 1)
+  // Use Astro's built-in paginate function
+  return paginate(sortedPosts, { pageSize: postsPerPage });
 }
 
-const { paginatedPosts, currentPage, totalPages } = Astro.props;
-const title = `Blog - Page ${currentPage}`;
-const description = `Blog posts - Page ${currentPage} of ${totalPages}`;
+const { page } = Astro.props;
+const title = `Blog - Page ${page.currentPage}`;
+const description = `Blog posts - Page ${page.currentPage} of ${page.lastPage}`;
 ---
 
 <BaseLayout title={title} description={description} current="blog">
   <div class="container">
     <h1>Blog Posts</h1>
-    <p>Page {currentPage} of {totalPages}</p>
+    <p>Page {page.currentPage} of {page.lastPage}</p>
     
     <ul class="post-list">
-      {paginatedPosts.map(post => (
+      {page.data.map(post => (
         <li class="post-item">
           <a href={`/blog/${post.slug}`}>
             <h2>{post.title}</h2>
@@ -75,6 +59,6 @@ const description = `Blog posts - Page ${currentPage} of ${totalPages}`;
       ))}
     </ul>
     
-    <Pagination currentPage={currentPage} totalPages={totalPages} urlBase="/blog" />
+    <Pagination currentPage={page.currentPage} totalPages={page.lastPage} urlBase="/blog" />
   </div>
 </BaseLayout>
