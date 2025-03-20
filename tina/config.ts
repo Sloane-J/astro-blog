@@ -1,9 +1,15 @@
 import { defineConfig } from "tinacms";
 
+const branch =
+  process.env.NEXT_PUBLIC_TINA_BRANCH ||
+  process.env.NETLIFY_BRANCH ||
+  process.env.HEAD ||
+  "main";
+
 export default defineConfig({
-  branch: process.env.TINA_BRANCH || process.env.HEAD || "main",
-  clientId: process.env.TINA_CLIENT_ID || "ef5d9194-c93f-4d8e-a8bf-8f6d9d0b7024",
-  token: process.env.TINA_TOKEN || "bc3f3e3cb9dd6b16492f41a5bdf6c6b8bf618a7a",
+  branch,
+  clientId: "ef5d9194-c93f-4d8e-a8bf-8f6d9d0b7024",
+  token: "bc3f3e3cb9dd6b16492f41a5bdf6c6b8bf618a7a",
   build: {
     outputFolder: "admin",
     publicFolder: "public",
