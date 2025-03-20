@@ -6,10 +6,15 @@ const branch =
   process.env.HEAD ||
   "main";
 
+// The client ID from your TinaCMS app
+const clientId = "ef5d9194-c93f-4d8e-a8bf-8f6d9d0b7024";
+
 export default defineConfig({
   branch,
-  clientId: "ef5d9194-c93f-4d8e-a8bf-8f6d9d0b7024",
+  clientId: clientId,
   token: "bc3f3e3cb9dd6b16492f41a5bdf6c6b8bf618a7a",
+  
+  // Add this section for authentication
   build: {
     outputFolder: "admin",
     publicFolder: "public",
@@ -20,6 +25,9 @@ export default defineConfig({
       publicFolder: "public/assets/",
     },
   },
+  // Configure the API URL for authentication
+  apiURL: `https://content.tinajs.io/content/${clientId}/github/${branch}`,
+  
   schema: {
     collections: [
       {
