@@ -1,101 +1,385 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Pagination from '../components/Pagination.astro';
+import AstroSearch from '../components/AstroSearch.astro';
+import { Image } from 'astro:assets';
 
-const title = "Luminary ☀";
-const description = 'Luminary ☀ is your go-to destination for engaging content from across news, tech inovations and scienctific discoveries, movie trailers and the best deals online. We aim to aspire, inform and connect curious minds with the world around them 😉.';
-const permalink = Astro.site ? Astro.site.href : '/';
+export interface BlogPost {
+  title: string;
+  description: string;
+  publishDate: string;
+  category?: string;
+  tags?: string[];
+  featuredImage?: any;
+  file: string;
+}
+
+const title = "Home | Luminary ☀";
+const description = 'Latest articles on News, Tech and Science, Trailers, and Deals.';
+const permalink = Astro.site 
+  ? new URL('/home', Astro.site).href 
+  : '/home';
+
+// === Replace Astro.glob with import.meta.glob ===
+const postModules = import.meta.glob('../data/blog-posts/*.md', { eager: true });
+
+const allPostsMetadata: BlogPost[] = Object.entries(postModules).map(([path, mod]: [string, any]) => {
+  const { frontmatter } = mod;
+  return {
+    title: frontmatter.title,
+    description: frontmatter.description,
+    publishDate: frontmatter.publishDate,
+    category: frontmatter.category,
+    tags: frontmatter.tags,
+    featuredImage: frontmatter.featuredImage,
+    file: path,
+  };
+});
+
+// === Sort posts by publish date ===
+const sortedPosts = allPostsMetadata.sort((a, b) => 
+  new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf()
+);
+
+// Pagination settings
+const postsPerPage = 10;
+const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
+const currentPage = 1;
+const paginatedPosts = sortedPosts.slice(0, postsPerPage);
+
+// Get unique categories
+const sections = [...new Set(sortedPosts.map(post => post.category).filter(Boolean))];
+
+// Helper to extract slug from file path
+const getPostUrl = (post: BlogPost) => {
+  const parts = post.file.split('/');
+  const filename = parts[parts.length - 1].replace(/\.md$/, '');
+  return `/blog/${filename}`;
+};
 ---
-
 <BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="container">
 
-  <div class="home-container">
-    <div class="home-copy">
-      <h1>Welcome to Luminary</h1>
-      <p>your go-to destination for engaging content from across news, tech inovations and scienctific discoveries, movie trailers and the best deals online. We aim to aspire, inform and connect curious minds with the world around them 😉.</p>
-      <p>Check out the docs on <a href="https://www.github.com/Charca/astro-blog-template" target="_blank" rel="noopener">GitHub</a> to get started.</p>
+    <AstroSearch id="search" className="my-search" />
+    <br>
+    <div class="section-navigation">
+      {sections.map(section => (
+        <a href={`/blog/category/${section.toLowerCase().replace(/\s+/g, '-')}`} class="section-link">
+          {section}
+        </a>
+      ))}
     </div>
 
-    <div class="hero-image-container">
-      <picture>
-        <source srcset="/assets/home-illustration.webp" media="(min-width: 600px)">
-        <img class="hero-image" alt="Illustration of person reading a book" src="/assets/home-illustration-small.webp" width="550" height="466">
-      </picture>
-      <p class="caption">
-        Illustration by
-        <a href="https://icons8.com/illustrations/author/5c07e68d82bcbc0092519bb6" target="_blank" rel="noopener">Icons 8</a>
-        from
-        <a href="https://icons8.com/illustrations" target="_blank" rel="noopener">Ouch!</a>
-      </p>
-    </div>
+    <!-- Featured Post -->
+    {paginatedPosts.length > 0 && (
+      <div class="featured-post">
+        <h2>Featured Post</h2>
+        <div class="post-item featured">
+          {paginatedPosts[0].featuredImage && (
+            <div class="featured-image-container large">
+              <Image 
+                src={paginatedPosts[0].featuredImage} 
+                alt={paginatedPosts[0].title}
+                class="featured-image"
+                width={800}
+                height={450}
+                loading="lazy"
+                format="webp"
+              />
+            </div>
+          )}
+          <div class="post-content">
+            <h2>
+              <a href={getPostUrl(paginatedPosts[0])}>{paginatedPosts[0].title}</a>
+            </h2>
+            <p>{paginatedPosts[0].description}</p>
+            
+            <div class="post-meta">
+              {paginatedPosts[0].category && (
+                <a href={`/blog/category/${paginatedPosts[0].category.toLowerCase().replace(/\s+/g, '-')}`} class="category">
+                  {paginatedPosts[0].category}
+                </a>
+              )}
+              {paginatedPosts[0].tags && paginatedPosts[0].tags.length > 0 && (
+                <div class="tags">
+                  {paginatedPosts[0].tags.map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div class="post-item-footer">
+              <span class="post-item-date">— {new Date(paginatedPosts[0].publishDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</span>
+              <a href={getPostUrl(paginatedPosts[0])} class="read-more-btn">Continue Reading</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    <h2>Latest Posts</h2>
+    {paginatedPosts.slice(1).map((post, index) => {
+      const href = getPostUrl(post);
+      return (
+        <div>
+          { index !== 0 && <hr /> }
+          <div class="post-item">
+            {post.featuredImage && (
+              <div class="featured-image-container">
+                <Image 
+                  src={post.featuredImage} 
+                  alt={post.title}
+                  class="featured-image"
+                  width={400}
+                  height={225}
+                  loading="lazy"
+                  format="webp"
+                />
+              </div>
+            )}
+            <div class="post-content">
+              <h2>
+                <a href={href}>{post.title}</a>
+              </h2>
+              <p>{post.description}</p>
+              
+              <div class="post-meta">
+                {post.category && (
+                  <a href={`/blog/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`} class="category">
+                    {post.category}
+                  </a>
+                )}
+                
+                {post.tags && post.tags.length > 0 && (
+                  <div class="tags">
+                    {post.tags.slice(0, 3).map(tag => (
+                      <a href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`} class="tag">{tag}</a>
+                    ))}
+                    {post.tags.length > 3 && <span class="tag">+{post.tags.length - 3}</span>}
+                  </div>
+                )}
+              </div>
+              
+              <div class="post-item-footer">
+                <span class="post-item-date">— {new Date(post.publishDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}</span>
+                <a href={`${href}#disqus_thread`} class="read-more-btn">Continue Reading</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    })}
+    
+    {totalPages > 1 && (
+      <Pagination currentPage={currentPage} totalPages={totalPages} urlBase="/blog" />
+    )}
+    <!-- Disqus Comment Count Script -->
+    <script id="dsq-count-scr" src="//luminary-1.disqus.com/count.js" async></script>
   </div>
 </BaseLayout>
 
+
 <style>
-  .home-container {
-    align-items: center;
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    margin: 2em 0;
-    min-height: 400px;
-  }
-
-  .home-copy {
-    flex: 1;
-    padding: 0 1em;
-  }
-
-  .home-copy h1 {
-    font-weight: 700;
-    margin-bottom: 0.5em;
-    line-height: 1.3;
-  }
-
-  .home-copy p {
-    font-size: 1.4em;
-  }
-
-  .hero-image-container {
-    margin: 0 1em;
-    text-align: center;
-  }
-
-  .hero-image-container picture {
-    display: block;
-    min-height: 250px;
-  }
-
-  .caption {
-    font-size: .8em;
-    font-style: italic;
-    text-align: left;
-  }
-
-  .hero-image {
+  /* Add critical CSS here for better render performance */
+  .container {
     width: 100%;
-    max-width: 550px;
-    margin-bottom: 1em;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .featured-post {
+    margin-bottom: 2rem;
+  }
+  
+  .post-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .post-item {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+  }
+  
+  .featured-image-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    aspect-ratio: 16/9;
+  }
+  
+  .featured-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  h2,
+  .post-item-footer {
+    font-family: var(--font-family-sans);
+    font-weight: 700;
   }
 
-  @media (max-width: 1200px) {
-    p {
-      font-size: 1.2em;
-    }
+  .section-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+  }
 
-    .hero-image {
-      max-width: 400px;
+  .section-link {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .section-link:hover {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    box-shadow: 0 0 0 2px var(--primary-color, #4a6cf7);
+  }
+
+  .featured-post {
+    margin-bottom: 60px;
+  }
+
+  .post-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+  }
+
+  .post-item.featured {
+    border-radius: 12px;
+    padding: 20px;
+    background-color: rgba(74, 108, 247, 0.05);
+    border: 1px solid rgba(74, 108, 247, 0.1);
+  }
+
+  @media (min-width: 768px) {
+    .post-item {
+      flex-direction: row;
+      gap: 30px;
     }
   }
 
-  @media (max-width: 800px) {
-    .home-container {
-      flex-direction: column;
-    }
+  .featured-image-container {
+    flex: 0 0 280px;
+    margin-bottom: 20px;
+  }
 
-    .home-copy {
-      flex: 0;
-      padding-bottom: 2em;
-      text-align: center;
+  .featured-image-container.large {
+    flex: 0 0 100%;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .featured-image-container.large {
+      flex: 0 0 400px;
     }
+  }
+
+  @media (min-width: 768px) {
+    .featured-image-container {
+      margin-bottom: 0;
+    }
+  }
+
+  .featured-image {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .post-content {
+    flex: 1;
+  }
+
+  .post-item-date {
+    color: var(--text-secondary);
+    text-align: left;
+    text-transform: uppercase;
+    margin-right: 16px;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .category {
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    background-color: #e0e0e0;
+    color: #555555;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .post-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .read-more-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.4s ease-in;
+    font-weight: 500;
+  }
+
+  .read-more-btn:hover {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    transition: background-color 0.4s ease-out;
+  }
+
+  hr {
+    margin: 60px auto;
   }
 </style>
