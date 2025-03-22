@@ -78,7 +78,7 @@ function getRelatedPosts(currentPost: BlogPost, allPosts: BlogPost[]) {
 const relatedPosts = getRelatedPosts(post, allPosts);
 ---
 
-<BaseLayout title={title} description={description} permalink={permalink} current="blog">
+<BaseLayout title={title} description={description} permalink={permalink}>
 
   <ShareThisScript /> <!-- Add the script to the head -->
 
@@ -163,7 +163,7 @@ const relatedPosts = getRelatedPosts(post, allPosts);
     )}
     
     <div class="back-link">
-      <a href="/blog">&larr; Back to Blog</a>
+      <a href="/">&larr; Back to Blog</a>
     </div>
 
     <div id="disqus_thread"></div>
