@@ -1,10 +1,13 @@
 ---
+Reading time: 5 minutes
+comments: true
+draft: false
 title: Testing for Astrojs + Tina CMS
-date: 2025-03-12T00:00:00.000Z
 description: This is a sample text for I make changes tina's config fields
-author: Samuel D. Jnr
-publishDate: 12-03-2025
+date: 2025-03-12T00:00:00.000Z
+publishDate: 'March 11, 2025'
 featuredImage: /assets/blog/images/noella.jpg
+author: Samuel D. Jnr
 category: Tech and Science
 tags:
   - Static Site Generation
@@ -18,9 +21,6 @@ keywords:
   - Astrojs
   - Web Development
   - Static Site Generation
-Reading time: 5 minutes
-comments: true
-draft: false
 ---
 
 let me just write something here
@@ -54,6 +54,7 @@ var fun = function lang(l) {
   return true;
 };
 ```
+
 <figure>
   <img src="/assets/blog/images/HTU STUDENT LOGINS.jpg" alt="A breathtaking sunset over the ocean with vibrant orange hues" />
   <caption>A serene sunset over the ocean captured in vibrant colors.</caption>
@@ -73,3 +74,4 @@ const greet = (name) => {
 const html = `<div class="container">
   <h1>Welcome</h1>
 </div>`;
+```

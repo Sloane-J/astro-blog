@@ -1,9 +1,14 @@
 ---
+comments: true
+draft: false
+title: 'Getting Started with Astro: A Modern Web Framework'
 description: >-
   Learn how Astro can help you build faster websites with less JavaScript while
   maintaining a great developer experience.
-publishDate: 11-03-2025
+date: 2025-03-10T00:00:00.000Z
+publishDate: 'March 10, 2025'
 featuredImage: /assets/blog/casual-life-3d-meditation-crystal.webp
+author: Enerstina
 category: Tech and Science
 tags:
   - Astro
@@ -17,12 +22,7 @@ keywords:
   - islands architecture
   - component-based
   - partial hydration
-title: 'Getting Started with Astro: A Modern Web Framework'
-date: 2025-03-11T00:00:00.000Z
-comments: true
-draft: false
 ---
-
 
 **Astro** has been gaining significant traction among developers looking for a faster way to build content-focused websites. Unlike traditional JavaScript frameworks that send large JS bundles to the client, Astro takes a different approach.
 
