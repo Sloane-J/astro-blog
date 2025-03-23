@@ -1,109 +1,251 @@
 ---
-// components/Pagination.astro
-const { currentPage, totalPages, urlBase } = Astro.props;
+/**
+ * A pagination component that works with Astro's pagination system
+ */
 
-const prevPage = currentPage > 1 ? currentPage - 1 : null;
-const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+ export interface Props {
+  currentPage: number;
+  totalPages: number;
+  urlBase: string;
+  showNumbers?: boolean;
+}
+
+const { currentPage, totalPages, urlBase, showNumbers = true } = Astro.props;
+
+// Helper function to generate range of page numbers with ellipsis
+function generatePageNumbers(current: number, total: number, maxVisible: number = 5) {
+  if (total <= maxVisible) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  // Always show first and last page
+  const pages = [1];
+  
+  // Calculate range around current page
+  const leftOffset = Math.floor(maxVisible / 2);
+  const rightOffset = Math.ceil(maxVisible / 2) - 1;
+  
+  let startPage = Math.max(2, current - leftOffset);
+  let endPage = Math.min(total - 1, current + rightOffset);
+  
+  // Adjust if we're close to the beginning
+  if (startPage <= 2) {
+    startPage = 2;
+    endPage = Math.min(total - 1, startPage + maxVisible - 3);
+  }
+  
+  // Adjust if we're close to the end
+  if (endPage >= total - 1) {
+    endPage = total - 1;
+    startPage = Math.max(2, endPage - (maxVisible - 3));
+  }
+  
+  // Add ellipsis before the range if needed
+  if (startPage > 2) {
+    pages.push('...');
+  }
+  
+  // Add the range of pages
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i);
+  }
+  
+  // Add ellipsis after the range if needed
+  if (endPage < total - 1) {
+    pages.push('...');
+  }
+  
+  // Add the last page
+  if (total > 1) {
+    pages.push(total);
+  }
+  
+  return pages;
+}
+
+const pageNumbers = generatePageNumbers(currentPage, totalPages);
+
+// Helper function to get the URL for a page
+function getPageUrl(pageNum: number): string {
+  if (pageNum === 1) {
+    // For page 1, strip the /1 from the URL
+    return urlBase;
+  } else {
+    return `${urlBase}/${pageNum}`;
+  }
+}
+
+// Determine the URLs for previous and next pages
+const prevUrl = currentPage > 1 ? getPageUrl(currentPage - 1) : null;
+const nextUrl = currentPage < totalPages ? getPageUrl(currentPage + 1) : null;
 ---
 
-<div class="pagination">
-  <div class="pagination-links">
-    {prevPage ? (
-      <a href={`${urlBase}${prevPage === 1 ? '' : `/${prevPage}`}`} class="pagination-link prev">
-        &larr; Previous
-      </a>
-    ) : (
-      <span class="pagination-link prev disabled">&larr; Previous</span>
-    )}
-    
-    <div class="pagination-numbers">
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <a 
-          href={`${urlBase}${page === 1 ? '' : `/${page}`}`} 
-          class={`pagination-number ${currentPage === page ? 'active' : ''}`}
-        >
-          {page}
+<nav aria-label="Pagination" class="pagination-nav">
+  <div class="pagination-container">
+    {/* Previous page button */}
+    <div class="pagination-buttons">
+      {prevUrl ? (
+        <a href={prevUrl} class="pagination-button prev">
+          <span class="button-content">
+            <span class="arrow">&larr;</span>
+            <span class="text">Previous</span>
+          </span>
         </a>
-      ))}
+      ) : (
+        <span class="pagination-button prev disabled">
+          <span class="button-content">
+            <span class="arrow">&larr;</span>
+            <span class="text">Previous</span>
+          </span>
+        </span>
+      )}
+      
+      {/* Page numbers */}
+      {showNumbers && (
+        <div class="pagination-numbers">
+          {pageNumbers.map((pageNum) => {
+            if (pageNum === '...') {
+              return <span class="pagination-ellipsis">&hellip;</span>;
+            }
+            
+            const isCurrentPage = pageNum === currentPage;
+            return (
+              <a 
+                href={isCurrentPage ? undefined : getPageUrl(pageNum as number)}
+                class={`pagination-number ${isCurrentPage ? 'active' : ''}`}
+                aria-current={isCurrentPage ? 'page' : undefined}
+                aria-label={`Page ${pageNum}`}
+              >
+                {pageNum}
+              </a>
+            );
+          })}
+        </div>
+      )}
+      
+      {/* Next page button */}
+      {nextUrl ? (
+        <a href={nextUrl} class="pagination-button next">
+          <span class="button-content">
+            <span class="text">Next</span>
+            <span class="arrow">&rarr;</span>
+          </span>
+        </a>
+      ) : (
+        <span class="pagination-button next disabled">
+          <span class="button-content">
+            <span class="text">Next</span>
+            <span class="arrow">&rarr;</span>
+          </span>
+        </span>
+      )}
     </div>
     
-    {nextPage ? (
-      <a href={`${urlBase}${nextPage === 1 ? '' : `/${nextPage}`}`} class="pagination-link next">
-        Next &rarr;
-      </a>
-    ) : (
-      <span class="pagination-link next disabled">Next &rarr;</span>
-    )}
+    {/* Page indicator */}
+    <div class="pagination-info">
+      <span>Page {currentPage} of {totalPages}</span>
+    </div>
   </div>
-  
-  <div class="pagination-info">
-    Page {currentPage} of {totalPages}
-  </div>
-</div>
+</nav>
 
 <style>
-  .pagination {
+  .pagination-nav {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  
+  .pagination-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 40px 0;
+    gap: 20px;
   }
   
-  .pagination-links {
+  .pagination-buttons {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
   }
   
-  .pagination-link {
-    padding: 8px 16px;
-    color: var(--primary-color, #4a6cf7);
-    border: 1px solid var(--primary-color, #4a6cf7);
-    border-radius: 4px;
+  .pagination-button {
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
-    transition: all 0.3s ease;
-  }
-  
-  .pagination-link:hover:not(.disabled) {
+    padding: 8px 16px;
     background-color: var(--primary-color, #4a6cf7);
     color: white;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
   }
   
-  .pagination-link.disabled {
-    color: #ccc;
-    border-color: #eee;
+  .pagination-button:hover:not(.disabled) {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    box-shadow: 0 0 0 2px var(--primary-color, #4a6cf7);
+  }
+  
+  .pagination-button.disabled {
+    background-color: #e0e0e0;
+    color: #999;
     cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   
   .pagination-numbers {
     display: flex;
-    gap: 5px;
+    align-items: center;
+    gap: 8px;
   }
   
   .pagination-number {
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 4px;
     text-decoration: none;
-    color: var(--text-color);
+    background-color: #f0f0f0;
+    color: #333;
     transition: all 0.3s ease;
+    font-weight: 500;
   }
   
-  .pagination-number:hover {
-    background-color: #f0f0f0;
+  .pagination-number:hover:not(.active) {
+    background-color: #e0e0e0;
   }
   
   .pagination-number.active {
     background-color: var(--primary-color, #4a6cf7);
     color: white;
+    cursor: default;
+  }
+  
+  .pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    color: #666;
   }
   
   .pagination-info {
-    margin-top: 10px;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: var(--text-secondary, #666);
+  }
+  
+  @media (min-width: 768px) {
+    .pagination-container {
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
 </style>
