@@ -1,12 +1,12 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Pagination from '../../components/Pagination.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Pagination from '../../../components/Pagination.astro';
 import { Image } from 'astro:assets';
-import AstroSearch from '../../components/AstroSearch.astro';
+import AstroSearch from '../../../components/AstroSearch.astro';
 
 export async function getStaticPaths({ paginate }) {
   // Import markdown files eagerly
-  const postModules = import.meta.glob('../../data/blog-posts/*.md', { eager: true });
+  const postModules = import.meta.glob('../../../data/blog-posts/*.md', { eager: true });
 
   // Helper: Extract slug from file path
   const getSlug = (filePath) => {
@@ -29,54 +29,75 @@ export async function getStaticPaths({ paginate }) {
     };
   });
 
-  // Sort posts by publish date, newest first
-  const sortedPosts = allPosts.sort((a, b) => 
-    new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf()
-  );
+  // Get unique categories in proper case format as they appear in frontmatter
+  const uniqueSections = [...new Set(allPosts
+    .map(post => post.category)
+    .filter(Boolean))];
   
-  // Use Astro's paginate helper to create pages
-  return paginate(sortedPosts, {
-    pageSize: 10
+  const postsPerPage = 10;
+  
+  // Create paths for each section
+  return uniqueSections.flatMap(section => {
+    // Filter posts by category
+    const sectionPosts = allPosts
+      .filter(post => post.category === section)
+      .sort((a, b) => new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf());
+      
+    // Convert section to URL-friendly format
+    const sectionSlug = section.toLowerCase().replace(/\s+/g, '-');
+    
+    // Use Astro's paginate helper to create pages
+    return paginate(sectionPosts, {
+      params: { section: sectionSlug, page: 1 },
+      props: { sectionName: section },
+      pageSize: postsPerPage
+    });
   });
 }
 
 // Get props passed from getStaticPaths
-const { page } = Astro.props;
+const { page, sectionName } = Astro.props;
+const { section } = Astro.params;
 
-// Get all unique categories for the sidebar navigation
-const postModules = await import.meta.glob('../../data/blog-posts/*.md', { eager: true });
+// Get related sections (excluding current one)
+const postModules = await import.meta.glob('../../../data/blog-posts/*.md', { eager: true });
 const allPosts = Object.values(postModules).map(mod => mod.frontmatter);
-const uniqueSections = [...new Set(allPosts
-  .map(post => post.category)
-  .filter(Boolean))];
+const uniqueSections = [...new Set(allPosts.map(post => post.category).filter(Boolean))];
+const relatedSections = uniqueSections.filter(s => s !== sectionName);
 
-const title = `Blog | Luminary ☀`;
-const description = `Latest articles and blog posts`;
-const permalink = Astro.site ? new URL('/blog', Astro.site).href : '/blog';
+const title = `${sectionName} | Luminary ☀`;
+const description = `Latest articles in ${sectionName}`;
+const permalink = Astro.site ? new URL(`/blog/${section}/${page.currentPage}`, Astro.site).href : `/blog/${section}/${page.currentPage}`;
+
+// Mark current category for navigation
+const currentCategory = section ? `blog/${section}` : "";
 ---
 
-<BaseLayout title={title} description={description} permalink={permalink} current="blog">
+<BaseLayout title={title} description={description} permalink={permalink} current={currentCategory}>
   <div class="container">
     <div class="section-header">
-      <h1>All Articles</h1>
-      <div>
-        <AstroSearch id="search" className="section-search" />
-      </div>
+      <a href="/blog" class="back-to-blog">&larr; Home</a>
+      <h1>{sectionName}</h1>
     </div>
-
-    {/* Categories navigation */}
-    {uniqueSections.length > 0 && (
+    
+    <AstroSearch id="search" className="section-search" />
+    
+    {/* Related sections navigation */}
+    {relatedSections.length > 0 && (
       <div class="related-sections">
-        <h3>Categories</h3>
+        <h3>Other Categories</h3>
         <div class="section-navigation">
-          {uniqueSections.map(section => (
-            <a 
-              href={`/blog/${section.toLowerCase().replace(/\s+/g, '-')}`} 
-              class="section-link"
-            >
-              {section}
-            </a>
-          ))}
+          {relatedSections.map(otherSection => {
+            const sectionSlug = otherSection.toLowerCase().replace(/\s+/g, '-');
+            return (
+              <a 
+                href={`/blog/${sectionSlug}/1`} 
+                class="section-link"
+              >
+                {otherSection}
+              </a>
+            );
+          })}
         </div>
       </div>
     )}
@@ -109,14 +130,7 @@ const permalink = Astro.site ? new URL('/blog', Astro.site).href : '/blog';
                   <p>{post.description}</p>
                   
                   <div class="post-meta">
-                    {post.category && (
-                      <a 
-                        href={`/blog/${post.category.toLowerCase().replace(/\s+/g, '-')}`}
-                        class="category"
-                      >
-                        {post.category}
-                      </a>
-                    )}
+                    <span class="category">{sectionName}</span>
                     
                     {post.tags && post.tags.length > 0 && (
                       <div class="tags">
@@ -152,13 +166,14 @@ const permalink = Astro.site ? new URL('/blog', Astro.site).href : '/blog';
           <Pagination 
             currentPage={page.currentPage} 
             totalPages={page.lastPage} 
-            urlBase="/blog" 
+            urlBase={`/blog/${section}`} 
           />
         )}
       </>
     ) : (
       <div class="no-posts">
-        <p>No posts found yet.</p>
+        <p>No posts found in this section yet.</p>
+        <a href="/blog" class="read-more-btn">Back to All Posts</a>
       </div>
     )}
   </div>
@@ -178,6 +193,19 @@ const permalink = Astro.site ? new URL('/blog', Astro.site).href : '/blog';
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+  }
+  
+  .back-to-blog {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  
+  .back-to-blog:hover {
+    color: #333;
   }
   
   .post-item {
@@ -212,13 +240,13 @@ const permalink = Astro.site ? new URL('/blog', Astro.site).href : '/blog';
     object-fit: cover;
   }
   
-  hr {
+ /* hr {
     border: 0;
     height: 1px;
     background-color: #eee;
     margin: 2rem 0;
   }
-  
+  */
   .no-posts {
     text-align: center;
     padding: 3rem 0;
@@ -248,6 +276,18 @@ const permalink = Astro.site ? new URL('/blog', Astro.site).href : '/blog';
   .section-header {
     margin-bottom: 30px;
     position: relative;
+  }
+
+  .back-to-blog {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .back-to-blog:hover {
+    color: var(--primary-color, #4a6cf7);
   }
 
   .section-navigation {
@@ -331,12 +371,6 @@ const permalink = Astro.site ? new URL('/blog', Astro.site).href : '/blog';
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-  }
-  
-  .category:hover {
-    opacity: 0.9;
   }
 
   .tags {
