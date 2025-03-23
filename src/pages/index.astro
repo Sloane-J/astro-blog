@@ -61,14 +61,14 @@ const getPostUrl = (post: BlogPost) => {
   <div class="container">
 
     <AstroSearch id="search" className="my-search" />
-    <br>
-    <div class="section-navigation">
+
+    {/* <div class="section-navigation">
       {sections.map(section => (
         <a href={`/blog/category/${section.toLowerCase().replace(/\s+/g, '-')}`} class="section-link">
           {section}
         </a>
       ))}
-    </div>
+    </div> --> */} 
 
     <!-- Featured Post -->
     {paginatedPosts.length > 0 && (

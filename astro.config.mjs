@@ -24,6 +24,7 @@ export default defineConfig({
   
   // Build options for performance
   build: {
+    manifest:true,
     inlineStylesheets: 'auto',
     format: 'file',
     assets: '_assets',
