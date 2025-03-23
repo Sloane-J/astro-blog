@@ -15,20 +15,20 @@ export default defineConfig({
   clientId,
   token,
   build: {
-    outputFolder: "admin",
     publicFolder: "public",
+    outputFolder: "admin",
   },
   media: {
     tina: {
-      mediaRoot: "blog",
-      publicFolder: "public/assets/",
+      publicFolder: "public",
+      mediaRoot: "/assets/blog/",
     },
   },
   schema: {
     collections: [
       {
         name: "post",
-        label: "Posts",
+        label: "All Post",
         path: "src/data/blog-posts",
         format: "md",
         fields: [
