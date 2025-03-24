@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
 title: Another change
+=======
+title: Made another change
+>>>>>>> 50e5ca35e4f65897bbd22cdfa56d60a3ae5b3bde
 description: the new config trial run
 date: 2025-03-23T00:00:00.000Z
 publishDate: 'March 23, 2025'
