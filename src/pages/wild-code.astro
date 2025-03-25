@@ -1,0 +1,1061 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Pagination from '../components/Pagination.astro';
+import AstroSearch from '../components/AstroSearch.astro';
+import { Image } from 'astro:assets';
+
+export interface BlogPost {
+  title: string;
+  description: string;
+  publishDate: string;
+  category?: string;
+  tags?: string[];
+  featuredImage?: any;
+  file: string;
+}
+
+const title = "Home | Luminary ☀";
+const description = 'Latest articles on News, Tech and Science, Trailers, and Deals.';
+const permalink = Astro.site 
+  ? new URL('/home', Astro.site).href 
+  : '/home';
+
+// === Replace Astro.glob with import.meta.glob ===
+const postModules = import.meta.glob('../data/blog-posts/*.md', { eager: true });
+
+const allPostsMetadata: BlogPost[] = Object.entries(postModules).map(([path, mod]: [string, any]) => {
+  const { frontmatter } = mod;
+  return {
+    title: frontmatter.title,
+    description: frontmatter.description,
+    publishDate: frontmatter.publishDate,
+    category: frontmatter.category,
+    tags: frontmatter.tags,
+    featuredImage: frontmatter.featuredImage,
+    file: path,
+  };
+});
+
+// === Sort posts by publish date ===
+const sortedPosts = allPostsMetadata.sort((a, b) => 
+  new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf()
+);
+
+// Pagination settings
+const postsPerPage = 10;
+const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
+const currentPage = 1;
+const paginatedPosts = sortedPosts.slice(0, postsPerPage);
+
+// Get unique categories
+const sections = [...new Set(sortedPosts.map(post => post.category).filter(Boolean))];
+
+// Helper to extract slug from file path
+const getPostUrl = (post: BlogPost) => {
+  const parts = post.file.split('/');
+  const filename = parts[parts.length - 1].replace(/\.md$/, '');
+  return `/blog/${filename}`;
+};
+---
+<BaseLayout title={title} description={description} permalink={permalink}>
+  <div class="container">
+
+    <AstroSearch id="search" className="my-search" />
+
+    {/* <div class="section-navigation">
+      {sections.map(section => (
+        <a href={`/blog/category/${section.toLowerCase().replace(/\s+/g, '-')}`} class="section-link">
+          {section}
+        </a>
+      ))}
+    </div> --> */} 
+
+<section class="bg-white">
+	<div class="py-4 px-2 mx-auto max-w-screen-xl sm:py-4 lg:px-6">
+		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 h-full">
+			<div class="col-span-2 sm:col-span-1 md:col-span-2 bg-gray-50 h-auto md:h-full flex flex-col">
+				<a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40 flex-grow">
+					<img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out">
+					<div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+					<h3 class="z-10 text-2xl font-medium text-white absolute top-0 left-0 p-4 xs:text-xl md:text-3xl">Wines</h3>
+				</a>
+			</div>
+			<div class="col-span-2 sm:col-span-1 md:col-span-2 bg-stone-50">
+				<a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40 mb-4">
+					<img src="https://images.unsplash.com/photo-1504675099198-7023dd85f5a3?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out">
+					<div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+					<h3 class="z-10 text-2xl font-medium text-white absolute top-0 left-0 p-4 xs:text-xl md:text-3xl">Gin</h3>
+				</a>
+				<div class="grid gap-4 grid-cols-2 sm:grid-cols-2 lg:grid-cols-2">
+					<a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40">
+						<img src="https://images.unsplash.com/photo-1571104508999-893933ded431?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out">
+						<div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+						<h3 class="z-10 text-2xl font-medium text-white absolute top-0 left-0 p-4 xs:text-xl md:text-3xl">Whiskey</h3>
+					</a>
+					<a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40">
+						<img src="https://images.unsplash.com/photo-1626897505254-e0f811aa9bf7?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out">
+						<div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+						<h3 class="z-10 text-2xl font-medium text-white absolute top-0 left-0 p-4 xs:text-xl md:text-3xl">Vodka</h3>
+					</a>
+				</div>
+			</div>
+			<div class="col-span-2 sm:col-span-1 md:col-span-1 bg-sky-50 h-auto md:h-full flex flex-col">
+				<a href="" class="group relative flex flex-col overflow-hidden rounded-lg px-4 pb-4 pt-40 flex-grow">
+					<img src="https://images.unsplash.com/photo-1693680501357-a342180f1946?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" class="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out">
+					<div class="absolute inset-0 bg-gradient-to-b from-gray-900/25 to-gray-900/5"></div>
+					<h3 class="z-10 text-2xl font-medium text-white absolute top-0 left-0 p-4 xs:text-xl md:text-3xl">Brandy</h3>
+				</a>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div class="bg-gray-100">
+  <div class="container mx-auto px-4 py-8">
+      <h1 class="text-4xl font-bold text-center mb-8">Bento Grid Layout with Images</h1>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <!-- Large item -->
+          <div class="md:col-span-2 md:row-span-2 relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxuYXR1cmV8ZW58MHwwfHx8MTcyMTA0MjYwMXww&ixlib=rb-4.0.3&q=80&w=1080" alt="Nature" class="w-full h-full object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 class="text-2xl font-bold text-white">Explore Nature</h3>
+                      <p class="text-white">Discover the beauty of the natural world</p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Two small items -->
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1493770348161-369560ae357d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxmb29kfGVufDB8MHx8fDE3MjEwNDI2MTR8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Food" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Culinary Delights</h4>
+                  </div>
+              </div>
+          </div>
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHx0ZWNobm9sb2d5fGVufDB8MHx8fDE3MjEwNDI2Mjh8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Technology" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Tech Innovations</h4>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Three medium items -->
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1503220317375-aaad61436b1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHx0cmF2ZWx8ZW58MHwwfHx8MTcyMTA0MjY0MXww&ixlib=rb-4.0.3&q=80&w=1080" alt="Travel" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Travel Adventures</h4>
+                  </div>
+              </div>
+          </div>
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxhcnR8ZW58MHwwfHx8MTcyMTA0MjY5Nnww&ixlib=rb-4.0.3&q=80&w=1080" alt="Art" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Artistic Expressions</h4>
+                  </div>
+              </div>
+          </div>
+
+          <!-- bottom cards -->
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1530549387789-4c1017266635?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwyfHxzd2ltbWluZ3xlbnwwfDB8fHwxNzIxMDQzMjkxfDA&ixlib=rb-4.0.3&q=80&w=1080" alt="Sport" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Swimming</h4>
+                  </div>
+              </div>
+          </div>
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMnx8Y2hlc3N8ZW58MHwwfHx8MTcyMTA0MzI0Nnww&ixlib=rb-4.0.3&q=80&w=1080" alt="Sport" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Chess</h4>
+                  </div>
+              </div>
+          </div>
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHxmb290YmFsbHxlbnwwfDB8fHwxNzIxMDQzMjExfDA&ixlib=rb-4.0.3&q=80&w=1080" alt="Sport" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Football</h4>
+                  </div>
+              </div>
+          </div>
+          <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+              <img src="https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw3fHxjcmlja2V0fGVufDB8MHx8fDE3MjEwNDMxNTh8MA&ixlib=rb-4.0.3&q=80&w=1080" alt="Sport" class="w-full h-48 object-cover">
+              <div
+                  class="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div class="absolute bottom-0 left-0 right-0 p-4">
+                      <h4 class="text-xl font-bold text-white">Cricket</h4>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<section class="pt-8 lg:pt-32 bg-[url('https://pagedone.io/asset/uploads/1691055810.png')] bg-center bg-cover">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative text-center">
+      <div class="border border-indigo-600 p-1 w-60 mx-auto rounded-full flex items-center justify-between mb-4">
+          <span class="font-inter text-xs font-medium text-gray-900 ml-3"
+          >Explore how to use for brands.</span>
+          <a href="javascript:;" class="w-8 h-8 rounded-full flex justify-center items-center bg-indigo-600">
+              <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                      d="M2.83398 8.00019L12.9081 8.00019M9.75991 11.778L13.0925 8.44541C13.3023 8.23553 13.4073 8.13059 13.4073 8.00019C13.4073 7.86979 13.3023 7.76485 13.0925 7.55497L9.75991 4.22241"
+                      stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+          </a>
+      </div>
+      <h1
+          class="max-w-2xl mx-auto text-center font-manrope font-bold text-4xl text-gray-900 mb-5 md:text-5xl leading-[50px]">
+          Control your Finances with our
+          <span class="text-indigo-600">Smart Tool </span>
+      </h1>
+      <p class="max-w-sm mx-auto text-center text-base font-normal leading-7 text-gray-500 mb-9">
+          Invest intelligently and discover a better way to manage your entire
+          wealth easily.
+      </p>
+      <a href="javascript:;"
+          class="w-full md:w-auto mb-14 inline-flex items-center justify-center py-3 px-7 text-base font-semibold text-center text-white rounded-full bg-indigo-600 shadow-xs hover:bg-indigo-700 transition-all duration-500">
+          Create an account
+          <svg class="ml-2" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                  d="M7.5 15L11.0858 11.4142C11.7525 10.7475 12.0858 10.4142 12.0858 10C12.0858 9.58579 11.7525 9.25245 11.0858 8.58579L7.5 5"
+                  stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+      </a>
+      <div class="flex justify-center">
+          <img
+          src="https://pagedone.io/asset/uploads/1691054543.png"
+          alt="Dashboard image"
+        />
+      </div>
+  </div>
+</section>
+
+<header class="relative">
+    <!-- BG Image -->
+    <img src="https://uploads-ssl.webflow.com/646f65e37fe0275cfb808405/646f66cdeeb4ddfdae25a26e_Background%20Hero.svg" alt="" class="absolute -z-10 inline-block h-full w-full object-cover" />
+    <!-- Container -->
+    <div class="mx-auto w-full max-w-7xl px-5 py-16 md:px-10 md:py-24 lg:py-32">
+      <!-- Heading Content -->
+      <div class="mx-auto max-w-3xl text-center">
+        <h1 class="mb-6 pb-4 text-4xl font-bold text-white md:text-6xl">The Website You Want Without The Dev Time.</h1>
+        <p class="mx-auto mb-5 max-w-[528px] text-xl text-[#636262] lg:mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam, purus sit amet luctus venenatis, lectus</p>
+        <a href="#" class="inline-block rounded-full bg-[#c9fd02] px-8 py-4 text-center font-bold text-black transition hover:border-black hover:bg-white">Get Started</a>
+      </div>
+      <!-- Logo Cloud -->
+      <div class="mx-auto mt-16 grid max-w-[1040px] grid-cols-2 gap-8 py-20 sm:grid-cols-3 sm:gap-12 md:grid-cols-5">
+        <div class="mx-auto">
+          <img src="https://uploads-ssl.webflow.com/646f65e37fe0275cfb808405/646f66cdeeb4ddfdae25a267_Microsoft%20Logo.svg" alt="" class="inline-block" />
+        </div>
+        <div class="mx-auto">
+          <img src="https://uploads-ssl.webflow.com/646f65e37fe0275cfb808405/646f66cdeeb4ddfdae25a26a_PayPal%20Logo.svg" alt="" class="inline-block" />
+        </div>
+        <div class="mx-auto">
+          <img src="https://uploads-ssl.webflow.com/646f65e37fe0275cfb808405/646f66cdeeb4ddfdae25a268_Google%20Logo.svg" alt="" class="inline-block" />
+        </div>
+        <div class="mx-auto">
+          <img src="https://uploads-ssl.webflow.com/646f65e37fe0275cfb808405/646f66cdeeb4ddfdae25a269_Chase%20Logo.svg" alt="" class="inline-block" />
+        </div>
+        <div class="mx-auto">
+          <img src="https://uploads-ssl.webflow.com/646f65e37fe0275cfb808405/646f66cdeeb4ddfdae25a26b_Walmart%20Logo.svg" alt="" class="inline-block" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <br>
+  <section class=" w-full  bg-[#0A2025] py-9 px-8">
+    <div class="mx-auto flex  flex-col items-center lg:flex-row justify-center gap-10 py-40 max-w-[1440px] bg-no-repeat ">
+      <div class="w-[660px]  flex-col justify-center items-start gap-20 inline-flex">
+        <div class="self-stretch  flex-col justify-start items-start gap-5 flex">
+          <h1 class="self-stretch">
+            <span class="text-white text-5xl font-bold font-['Roboto']">Redefining Motion:</span><span class="text-[#3e9d26] text-5xl font-bold font-['Roboto']">The Future of Footwear is Here</span>
+          </h1>
+          <p class="self-stretch text-white text-xl font-normal font-['Roboto']">Experience unparalleled comfort and
+            innovative design with our state-of-the-art, futuristic sports shoes. Built for champions, designed for you.
+          </p>
+        </div>
+        <div class="justify-start items-center gap-5 inline-flex">
+          <div class="justify-start items-center gap-2.5 flex">
+            <p class="text-white text-sm font-normal font-['Roboto']">Step into the Future</p>
+            <div data-svg-wrapper="true" class="relative"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M20.7806 12.5306L14.0306 19.2806C13.8899 19.4213 13.699 19.5004 13.5 19.5004C13.301 19.5004 13.1101 19.4213 12.9694 19.2806C12.8286 19.1399 12.7496 18.949 12.7496 18.75C12.7496 18.551 12.8286 18.3601 12.9694 18.2194L18.4397 12.75H3.75C3.55109 12.75 3.36032 12.671 3.21967 12.5303C3.07902 12.3897 3 12.1989 3 12C3 11.8011 3.07902 11.6103 3.21967 11.4697C3.36032 11.329 3.55109 11.25 3.75 11.25H18.4397L12.9694 5.78061C12.8286 5.63988 12.7496 5.44901 12.7496 5.24999C12.7496 5.05097 12.8286 4.8601 12.9694 4.71936C13.1101 4.57863 13.301 4.49957 13.5 4.49957C13.699 4.49957 13.8899 4.57863 14.0306 4.71936L20.7806 11.4694C20.8504 11.539 20.9057 11.6217 20.9434 11.7128C20.9812 11.8038 21.0006 11.9014 21.0006 12C21.0006 12.0986 20.9812 12.1961 20.9434 12.2872C20.9057 12.3782 20.8504 12.461 20.7806 12.5306Z"
+                  fill="white"></path>
+              </svg></div>
+          </div>
+          <button class="px-8 py-2.5 bg-[#3e9d26] rounded-[10px] justify-center items-center gap-2.5 flex text-white text-sm font-semibold font-['Roboto']">Shop Now</button>
+        </div>
+      </div><img class="w-full max-w-[400px]" src="https://iili.io/338c9je.png" alt="">
+    </div>
+  </section>
+
+  <br>
+  <div class="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16 relative">
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-10">
+
+        <div class="sm:col-span-6 lg:col-span-5">
+            <a href="#">
+                <div class="h-56 bg-cover text-center overflow-hidden"
+                    style="background-image: url('https://tailwindcss.com/img/card-left.jpg')"
+                    title="Woman holding a mug">
+                </div>
+            </a>
+            <div
+                class="mt-3 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal">
+                <div class="lg:pl-16">
+                    <a href="#"
+                        class="text-xs text-indigo-600 uppercase font-medium mb-3 flex items-center hover:text-gray-900 transition duration-500 ease-in-out">
+                        Fashion
+                    </a>
+                    <a href="#"
+                        class="text-gray-900 font-bold text-lg mb-2 hover:text-indigo-600 transition duration-500 ease-in-out">The
+                        perfect summer sweater that you can wear! </a>
+                    <p class="text-gray-700 text-xs mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                        Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sm:col-span-6 lg:col-span-4">
+            <div class="flex items-start mb-3 pb-3">
+                <a href="#" class="inline-block mr-3">
+                    <div class="w-20 h-20 bg-cover bg-center"
+                        style="background-image:url(https://media.gettyimages.com/photos/cristiano-ronaldo-of-juventus-fc-looks-dejected-during-the-uefa-of-picture-id1227967060?k=6&amp;m=1227967060&amp;s=612x612&amp;w=0&amp;h=cMSMlRyI6YAzcE_C2KgHGRLeVojHYoUhIvhwPBYv8f4=);">
+                    </div>
+                </a>
+                <div class="text-sm">
+                    <p class="text-gray-600 text-xs">Aug 18</p>
+                    <a href="#" class="text-gray-900 font-medium hover:text-indigo-600 leading-none">Cristiano Ronaldo
+                        of Juventus FC looks dejected during the...</a>
+                </div>
+            </div>
+            <div class="flex items-start mb-3 pb-3">
+                <a href="#" class="inline-block mr-3">
+                    <div class="w-20 h-20 bg-cover bg-center"
+                        style="background-image:url(https://media.gettyimages.com/photos/lionel-messi-and-marcandre-ter-stegen-of-fc-barcelona-waits-in-the-picture-id1266763488?k=6&amp;m=1266763488&amp;s=612x612&amp;w=0&amp;h=8vxz9HfQVfrff5N7d1lBVxtLamRQGK3J3lyHkUuuIiw=);">
+                    </div>
+                </a>
+                <div class="text-sm w-2/3">
+                    <p class="text-gray-600 text-xs">Jan 18</p>
+                    <a href="#" class="text-gray-900 font-medium hover:text-indigo-600 leading-none">Barcelona v Bayern
+                        Munich </a>
+                </div>
+            </div>
+            <div class="flex items-start mb-3 pb-3">
+                <a href="#" class="inline-block mr-3">
+                    <div class="w-20 h-20 bg-cover bg-center"
+                        style="background-image:url(https://media.gettyimages.com/photos/cristiano-ronaldo-of-juventus-fc-looks-dejected-during-the-uefa-of-picture-id1227967060?k=6&amp;m=1227967060&amp;s=612x612&amp;w=0&amp;h=cMSMlRyI6YAzcE_C2KgHGRLeVojHYoUhIvhwPBYv8f4=);">
+                    </div>
+                </a>
+                <div class="text-sm">
+                    <p class="text-gray-600 text-xs">Aug 18</p>
+                    <a href="#" class="text-gray-900 font-medium hover:text-indigo-600 leading-none">Cristiano Ronaldo
+                        of Juventus FC looks dejected during the...</a>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <a href="#" class="inline-block mr-3">
+                    <div class="w-20 h-20 bg-cover bg-center"
+                        style="background-image:url(https://media.gettyimages.com/photos/lionel-messi-of-fc-barcelona-looks-dejected-following-his-teams-in-picture-id1266341828?k=6&amp;m=1266341828&amp;s=612x612&amp;w=0&amp;h=FZi-bSrIlOEE01780h79GsbBYPqZo2l3aaCxoktWADY=);">
+                    </div>
+                </a>
+                <div class="text-sm w-2/3">
+                    <p class="text-gray-600 text-xs">July 23</p>
+                    <a href="#" class="text-gray-900 font-medium hover:text-indigo-600 leading-none">Barcelona v Bayern
+                        Munich - UEFA Champions League </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="sm:col-span-12 lg:col-span-3">
+            <a href="#">
+                <div class="h-56 bg-cover text-center overflow-hidden"
+                    style="background-image: url('https://tailwindcss.com/img/card-left.jpg')"
+                    title="Woman holding a mug">
+                </div>
+            </a>
+            <div
+                class="mt-3 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal">
+                <div class="">
+                    <a href="#"
+                        class="text-xs text-indigo-600 uppercase font-medium flex items-center hover:text-gray-900 transition duration-500 ease-in-out">
+                        Fashion
+                    </a>
+                    <a href="#"
+                        class="text-gray-900 font-bold text-lg mb-2 hover:text-indigo-600 transition duration-500 ease-in-out">The
+                        perfect summer sweater that you can wear! </a>
+                    <p class="text-gray-700 text-xs mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br>
+<div class="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16 relative">
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-5">
+
+        <div class="sm:col-span-5">
+            <a href="#">
+                <div class="bg-cover text-center overflow-hidden"
+                    style="min-height: 300px; background-image: url('https://api.time.com/wp-content/uploads/2020/07/never-trumpers-2020-election-01.jpg?quality=85&amp;w=1201&amp;h=676&amp;crop=1')"
+                    title="Woman holding a mug">
+                </div>
+            </a>
+            <div
+                class="mt-3 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex flex-col justify-between leading-normal">
+                <div class="">
+                    <a href="#"
+                        class="text-xs text-indigo-600 uppercase font-medium hover:text-gray-900 transition duration-500 ease-in-out">
+                        Election
+                    </a>
+                    <a href="#"
+                        class="block text-gray-900 font-bold text-2xl mb-2 hover:text-indigo-600 transition duration-500 ease-in-out">Revenge
+                        of the Never Trumpers</a>
+                    <p class="text-gray-700 text-base mt-2">Meet the Republican dissidents fighting to push Donald Trump
+                        out of office—and reclaim their party</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sm:col-span-7 grid grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="">
+                <a href="#">
+                    <div class="h-40 bg-cover text-center overflow-hidden"
+                        style="background-image: url('https://api.time.com/wp-content/uploads/2020/07/president-trump-coronavirus-election.jpg?quality=85&amp;w=364&amp;h=204&amp;crop=1')"
+                        title="Woman holding a mug">
+                    </div>
+                </a>
+                <a href="#"
+                    class="text-gray-900 inline-block font-semibold text-md my-2 hover:text-indigo-600 transition duration-500 ease-in-out">Trump
+                    Steps Back Into Coronavirus Spotlight</a>
+            </div>
+            <div class="">
+                <a href="#">
+                    <div class="h-40 bg-cover text-center overflow-hidden"
+                        style="background-image: url('https://api.time.com/wp-content/uploads/2020/06/GettyImages-1222922545.jpg?quality=85&amp;w=364&amp;h=204&amp;crop=1')"
+                        title="Woman holding a mug">
+                    </div>
+                </a>
+                <a href="#"
+                    class="text-gray-900 inline-block font-semibold text-md my-2 hover:text-indigo-600 transition duration-500 ease-in-out">How
+                    Trump's Mistakes Became Biden's Big Breaks</a>
+            </div>
+            <div class="">
+                <a href="#">
+                    <div class="h-40 bg-cover text-center overflow-hidden"
+                        style="background-image: url('https://api.time.com/wp-content/uploads/2020/07/American-Flag.jpg?quality=85&amp;w=364&amp;h=204&amp;crop=1')"
+                        title="Woman holding a mug">
+                    </div>
+                </a>
+                <a href="#"
+                    class="text-gray-900 inline-block font-semibold text-md my-2 hover:text-indigo-600 transition duration-500 ease-in-out">Survey:
+                    Many Americans 'Dissatisfied' With U.S.</a>
+            </div>
+            <div class="">
+                <a href="#">
+                    <div class="h-40 bg-cover text-center overflow-hidden"
+                        style="background-image: url('https://api.time.com/wp-content/uploads/2020/06/GettyImages-1222922545.jpg?quality=85&amp;w=364&amp;h=204&amp;crop=1')"
+                        title="Woman holding a mug">
+                    </div>
+                </a>
+                <a href="#"
+                    class="text-gray-900 inline-block font-semibold text-md my-2 hover:text-indigo-600 transition duration-500 ease-in-out">How
+                    Trump's Mistakes Became Biden's Big Breaks</a>
+            </div>
+            <div class="">
+                <a href="#">
+                    <div class="h-40 bg-cover text-center overflow-hidden"
+                        style="background-image: url('https://api.time.com/wp-content/uploads/2020/07/American-Flag.jpg?quality=85&amp;w=364&amp;h=204&amp;crop=1')"
+                        title="Woman holding a mug">
+                    </div>
+                </a>
+                <a href="#"
+                    class="text-gray-900 inline-block font-semibold text-md my-2 hover:text-indigo-600 transition duration-500 ease-in-out">Survey:
+                    Many Americans 'Dissatisfied' With U.S.</a>
+            </div>
+            <div class="">
+                <a href="#">
+                    <div class="h-40 bg-cover text-center overflow-hidden"
+                        style="background-image: url('https://api.time.com/wp-content/uploads/2020/07/president-trump-coronavirus-election.jpg?quality=85&amp;w=364&amp;h=204&amp;crop=1')"
+                        title="Woman holding a mug">
+                    </div>
+                </a>
+                <a href="#"
+                    class="text-gray-900 inline-block font-semibold text-md my-2 hover:text-indigo-600 transition duration-500 ease-in-out">Trump
+                    Steps Back Into Coronavirus Spotlight</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<br>
+<div class="bg-gray-50 py-24 sm:py-32">
+    <div class="mx-auto max-w-2xl px-6 lg:max-w-7xl lg:px-8">
+      <h2 class="text-center text-base/7 font-semibold text-indigo-600">Deploy faster</h2>
+      <p class="mx-auto mt-2 max-w-lg text-center text-4xl font-semibold tracking-tight text-balance text-gray-950 sm:text-5xl">Everything you need to deploy your app</p>
+      <div class="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
+        <div class="relative lg:row-span-2">
+          <div class="absolute inset-px rounded-lg bg-white lg:rounded-l-[2rem]"></div>
+          <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
+            <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
+              <p class="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">Mobile friendly</p>
+              <p class="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.</p>
+            </div>
+            <div class="@container relative min-h-[30rem] w-full grow max-lg:mx-auto max-lg:max-w-sm">
+              <div class="absolute inset-x-10 top-10 bottom-0 overflow-hidden rounded-t-[12cqw] border-x-[3cqw] border-t-[3cqw] border-gray-700 bg-gray-900 shadow-2xl">
+                <img class="size-full object-cover object-top" src="https://tailwindcss.com/plus-assets/img/component-images/bento-03-mobile-friendly.png" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/5 lg:rounded-l-[2rem]"></div>
+        </div>
+        <div class="relative max-lg:row-start-1">
+          <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-t-[2rem]"></div>
+          <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
+            <div class="px-8 pt-8 sm:px-10 sm:pt-10">
+              <p class="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">Performance</p>
+              <p class="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">Lorem ipsum, dolor sit amet consectetur adipisicing elit maiores impedit.</p>
+            </div>
+            <div class="flex flex-1 items-center justify-center px-8 max-lg:pt-10 max-lg:pb-12 sm:px-10 lg:pb-2">
+              <img class="w-full max-lg:max-w-xs" src="https://tailwindcss.com/plus-assets/img/component-images/bento-03-performance.png" alt="">
+            </div>
+          </div>
+          <div class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/5 max-lg:rounded-t-[2rem]"></div>
+        </div>
+        <div class="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
+          <div class="absolute inset-px rounded-lg bg-white"></div>
+          <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
+            <div class="px-8 pt-8 sm:px-10 sm:pt-10">
+              <p class="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">Security</p>
+              <p class="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi.</p>
+            </div>
+            <div class="@container flex flex-1 items-center max-lg:py-6 lg:pb-2">
+              <img class="h-[min(152px,40cqw)] object-cover" src="https://tailwindcss.com/plus-assets/img/component-images/bento-03-security.png" alt="">
+            </div>
+          </div>
+          <div class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/5"></div>
+        </div>
+        <div class="relative lg:row-span-2">
+          <div class="absolute inset-px rounded-lg bg-white max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]"></div>
+          <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
+            <div class="px-8 pt-8 pb-3 sm:px-10 sm:pt-10 sm:pb-0">
+              <p class="mt-2 text-lg font-medium tracking-tight text-gray-950 max-lg:text-center">Powerful APIs</p>
+              <p class="mt-2 max-w-lg text-sm/6 text-gray-600 max-lg:text-center">Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget sem sodales gravida.</p>
+            </div>
+            <div class="relative min-h-[30rem] w-full grow">
+              <div class="absolute top-10 right-0 bottom-0 left-10 overflow-hidden rounded-tl-xl bg-gray-900 shadow-2xl">
+                <div class="flex bg-gray-800/40 ring-1 ring-white/5">
+                  <div class="-mb-px flex text-sm/6 font-medium text-gray-400">
+                    <div class="border-r border-b border-r-white/10 border-b-white/20 bg-white/5 px-4 py-2 text-white">NotificationSetting.jsx</div>
+                    <div class="border-r border-gray-600/10 px-4 py-2">App.jsx</div>
+                  </div>
+                </div>
+                <div class="px-6 pt-6 pb-14">
+                  <!-- Your code example -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/5 max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<br>
+
+<div class="relative isolate flex items-center gap-x-6 overflow-hidden bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
+    <div class="absolute top-1/2 left-[max(-7rem,calc(50%-52rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+      <div class="aspect-577/310 w-[36.0625rem] bg-linear-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div>
+    </div>
+    <div class="absolute top-1/2 left-[max(45rem,calc(50%+8rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl" aria-hidden="true">
+      <div class="aspect-577/310 w-[36.0625rem] bg-linear-to-r from-[#ff80b5] to-[#9089fc] opacity-30" style="clip-path: polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)"></div>
+    </div>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <p class="text-sm/6 text-gray-900">
+        <strong class="font-semibold">GeneriCon 2023</strong><svg viewBox="0 0 2 2" class="mx-2 inline size-0.5 fill-current" aria-hidden="true"><circle cx="1" cy="1" r="1" /></svg>Join us in Denver from June 7 – 9 to see what’s coming next.
+      </p>
+      <a href="#" class="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-xs hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">Register now <span aria-hidden="true">&rarr;</span></a>
+    </div>
+    <div class="flex flex-1 justify-end">
+      <button type="button" class="-m-3 p-3 focus-visible:outline-offset-[-4px]">
+        <span class="sr-only">Dismiss</span>
+        <svg class="size-5 text-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+          <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <br>
+  <!--
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    theme: {
+      extend: {
+        gridTemplateRows: {
+          '[auto,auto,1fr]': 'auto auto 1fr',
+        },
+      },
+    },
+  }
+  ```
+-->
+<div class="bg-white">
+    <div class="pt-6">
+      <nav aria-label="Breadcrumb">
+        <ol role="list" class="mx-auto flex max-w-2xl items-center space-x-2 px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+          <li>
+            <div class="flex items-center">
+              <a href="#" class="mr-2 text-sm font-medium text-gray-900">Men</a>
+              <svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true" class="h-5 w-4 text-gray-300">
+                <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
+              </svg>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <a href="#" class="mr-2 text-sm font-medium text-gray-900">Clothing</a>
+              <svg width="16" height="20" viewBox="0 0 16 20" fill="currentColor" aria-hidden="true" class="h-5 w-4 text-gray-300">
+                <path d="M5.697 4.34L8.98 16.532h1.327L7.025 4.341H5.697z" />
+              </svg>
+            </div>
+          </li>
+  
+          <li class="text-sm">
+            <a href="#" aria-current="page" class="font-medium text-gray-500 hover:text-gray-600">Basic Tee 6-Pack</a>
+          </li>
+        </ol>
+      </nav>
+  
+      <!-- Image gallery -->
+      <div class="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
+        <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-02-secondary-product-shot.jpg" alt="Two each of gray, white, and black shirts laying flat." class="hidden size-full rounded-lg object-cover lg:block">
+        <div class="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
+          <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg" alt="Model wearing plain black basic tee." class="aspect-3/2 w-full rounded-lg object-cover">
+          <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg" alt="Model wearing plain gray basic tee." class="aspect-3/2 w-full rounded-lg object-cover">
+        </div>
+        <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-02-featured-product-shot.jpg" alt="Model wearing plain white basic tee." class="aspect-4/5 size-full object-cover sm:rounded-lg lg:aspect-auto">
+      </div>
+  
+      <!-- Product info -->
+      <div class="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
+        <div class="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
+          <h1 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Basic Tee 6-Pack</h1>
+        </div>
+  
+        <!-- Options -->
+        <div class="mt-4 lg:row-span-3 lg:mt-0">
+          <h2 class="sr-only">Product information</h2>
+          <p class="text-3xl tracking-tight text-gray-900">$192</p>
+  
+          <!-- Reviews -->
+          <div class="mt-6">
+            <h3 class="sr-only">Reviews</h3>
+            <div class="flex items-center">
+              <div class="flex items-center">
+                <!-- Active: "text-gray-900", Default: "text-gray-200" -->
+                <svg class="size-5 shrink-0 text-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                  <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" />
+                </svg>
+                <svg class="size-5 shrink-0 text-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                  <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" />
+                </svg>
+                <svg class="size-5 shrink-0 text-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                  <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" />
+                </svg>
+                <svg class="size-5 shrink-0 text-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                  <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" />
+                </svg>
+                <svg class="size-5 shrink-0 text-gray-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                  <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <p class="sr-only">4 out of 5 stars</p>
+              <a href="#" class="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">117 reviews</a>
+            </div>
+          </div>
+  
+          <form class="mt-10">
+            <!-- Colors -->
+            <div>
+              <h3 class="text-sm font-medium text-gray-900">Color</h3>
+  
+              <fieldset aria-label="Choose a color" class="mt-4">
+                <div class="flex items-center gap-x-3">
+                  <!-- Active and Checked: "ring-3 ring-offset-1" -->
+                  <label aria-label="White" class="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-gray-400 focus:outline-hidden">
+                    <input type="radio" name="color-choice" value="White" class="sr-only">
+                    <span aria-hidden="true" class="size-8 rounded-full border border-black/10 bg-white"></span>
+                  </label>
+                  <!-- Active and Checked: "ring-3 ring-offset-1" -->
+                  <label aria-label="Gray" class="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-gray-400 focus:outline-hidden">
+                    <input type="radio" name="color-choice" value="Gray" class="sr-only">
+                    <span aria-hidden="true" class="size-8 rounded-full border border-black/10 bg-gray-200"></span>
+                  </label>
+                  <!-- Active and Checked: "ring-3 ring-offset-1" -->
+                  <label aria-label="Black" class="relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-gray-900 focus:outline-hidden">
+                    <input type="radio" name="color-choice" value="Black" class="sr-only">
+                    <span aria-hidden="true" class="size-8 rounded-full border border-black/10 bg-gray-900"></span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+  
+            <!-- Sizes -->
+            <div class="mt-10">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-medium text-gray-900">Size</h3>
+                <a href="#" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Size guide</a>
+              </div>
+  
+              <fieldset aria-label="Choose a size" class="mt-4">
+                <div class="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-not-allowed items-center justify-center rounded-md border bg-gray-50 px-4 py-3 text-sm font-medium text-gray-200 uppercase hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="XXS" disabled class="sr-only">
+                    <span>XXS</span>
+                    <span aria-hidden="true" class="pointer-events-none absolute -inset-px rounded-md border-2 border-gray-200">
+                      <svg class="absolute inset-0 size-full stroke-2 text-gray-200" viewBox="0 0 100 100" preserveAspectRatio="none" stroke="currentColor">
+                        <line x1="0" y1="100" x2="100" y2="0" vector-effect="non-scaling-stroke" />
+                      </svg>
+                    </span>
+                  </label>
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium text-gray-900 uppercase shadow-xs hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="XS" class="sr-only">
+                    <span>XS</span>
+                    <!--
+                      Active: "border", Not Active: "border-2"
+                      Checked: "border-indigo-500", Not Checked: "border-transparent"
+                    -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md" aria-hidden="true"></span>
+                  </label>
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium text-gray-900 uppercase shadow-xs hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="S" class="sr-only">
+                    <span>S</span>
+                    <!--
+                      Active: "border", Not Active: "border-2"
+                      Checked: "border-indigo-500", Not Checked: "border-transparent"
+                    -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md" aria-hidden="true"></span>
+                  </label>
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium text-gray-900 uppercase shadow-xs hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="M" class="sr-only">
+                    <span>M</span>
+                    <!--
+                      Active: "border", Not Active: "border-2"
+                      Checked: "border-indigo-500", Not Checked: "border-transparent"
+                    -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md" aria-hidden="true"></span>
+                  </label>
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium text-gray-900 uppercase shadow-xs hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="L" class="sr-only">
+                    <span>L</span>
+                    <!--
+                      Active: "border", Not Active: "border-2"
+                      Checked: "border-indigo-500", Not Checked: "border-transparent"
+                    -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md" aria-hidden="true"></span>
+                  </label>
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium text-gray-900 uppercase shadow-xs hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="XL" class="sr-only">
+                    <span>XL</span>
+                    <!--
+                      Active: "border", Not Active: "border-2"
+                      Checked: "border-indigo-500", Not Checked: "border-transparent"
+                    -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md" aria-hidden="true"></span>
+                  </label>
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium text-gray-900 uppercase shadow-xs hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="2XL" class="sr-only">
+                    <span>2XL</span>
+                    <!--
+                      Active: "border", Not Active: "border-2"
+                      Checked: "border-indigo-500", Not Checked: "border-transparent"
+                    -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md" aria-hidden="true"></span>
+                  </label>
+                  <!-- Active: "ring-2 ring-indigo-500" -->
+                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium text-gray-900 uppercase shadow-xs hover:bg-gray-50 focus:outline-hidden sm:flex-1 sm:py-6">
+                    <input type="radio" name="size-choice" value="3XL" class="sr-only">
+                    <span>3XL</span>
+                    <!--
+                      Active: "border", Not Active: "border-2"
+                      Checked: "border-indigo-500", Not Checked: "border-transparent"
+                    -->
+                    <span class="pointer-events-none absolute -inset-px rounded-md" aria-hidden="true"></span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+  
+            <button type="submit" class="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden">Add to bag</button>
+          </form>
+        </div>
+  
+        <div class="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pt-6 lg:pr-8 lg:pb-16">
+          <!-- Description and details -->
+          <div>
+            <h3 class="sr-only">Description</h3>
+  
+            <div class="space-y-6">
+              <p class="text-base text-gray-900">The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: &quot;Black&quot;. Need to add an extra pop of color to your outfit? Our white tee has you covered.</p>
+            </div>
+          </div>
+  
+          <div class="mt-10">
+            <h3 class="text-sm font-medium text-gray-900">Highlights</h3>
+  
+            <div class="mt-4">
+              <ul role="list" class="list-disc space-y-2 pl-4 text-sm">
+                <li class="text-gray-400"><span class="text-gray-600">Hand cut and sewn locally</span></li>
+                <li class="text-gray-400"><span class="text-gray-600">Dyed with our proprietary colors</span></li>
+                <li class="text-gray-400"><span class="text-gray-600">Pre-washed &amp; pre-shrunk</span></li>
+                <li class="text-gray-400"><span class="text-gray-600">Ultra-soft 100% cotton</span></li>
+              </ul>
+            </div>
+          </div>
+  
+          <div class="mt-10">
+            <h2 class="text-sm font-medium text-gray-900">Details</h2>
+  
+            <div class="mt-4 space-y-6">
+              <p class="text-sm text-gray-600">The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming &quot;Charcoal Gray&quot; limited release.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+
+</BaseLayout>
+
+
+<style>
+  /* Add critical CSS here for better render performance */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .featured-post {
+    margin-bottom: 2rem;
+  }
+  
+  .post-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .post-item {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+  }
+  
+  .featured-image-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    aspect-ratio: 16/9;
+  }
+  
+  .featured-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  h2,
+  .post-item-footer {
+    font-family: var(--font-family-sans);
+    font-weight: 700;
+  }
+
+  .section-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+  }
+
+  .section-link {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .section-link:hover {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    box-shadow: 0 0 0 2px var(--primary-color, #4a6cf7);
+  }
+
+  .featured-post {
+    margin-bottom: 60px;
+  }
+
+  .post-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+  }
+
+  .post-item.featured {
+    border-radius: 12px;
+    padding: 20px;
+    background-color: rgba(74, 108, 247, 0.05);
+    border: 1px solid rgba(74, 108, 247, 0.1);
+  }
+
+  @media (min-width: 768px) {
+    .post-item {
+      flex-direction: row;
+      gap: 30px;
+    }
+  }
+
+  .featured-image-container {
+    flex: 0 0 280px;
+    margin-bottom: 20px;
+  }
+
+  .featured-image-container.large {
+    flex: 0 0 100%;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .featured-image-container.large {
+      flex: 0 0 400px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .featured-image-container {
+      margin-bottom: 0;
+    }
+  }
+
+  .featured-image {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .post-content {
+    flex: 1;
+  }
+
+  .post-item-date {
+    color: var(--text-secondary);
+    text-align: left;
+    text-transform: uppercase;
+    margin-right: 16px;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .category {
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    background-color: #e0e0e0;
+    color: #555555;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .post-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .read-more-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.4s ease-in;
+    font-weight: 500;
+  }
+
+  .read-more-btn:hover {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    transition: background-color 0.4s ease-out;
+  }
+
+  hr {
+    margin: 60px auto;
+  }
+</style>

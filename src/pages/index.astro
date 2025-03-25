@@ -1,26 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Pagination from '../components/Pagination.astro';
-import AstroSearch from '../components/AstroSearch.astro';
 import { Image } from 'astro:assets';
 
 export interface BlogPost {
   title: string;
   description: string;
   publishDate: string;
+  author: string;
   category?: string;
   tags?: string[];
   featuredImage?: any;
   file: string;
 }
 
-const title = "Home | Luminary ☀";
+const siteTitle = "Luminary ☀";
 const description = 'Latest articles on News, Tech and Science, Trailers, and Deals.';
 const permalink = Astro.site 
   ? new URL('/home', Astro.site).href 
   : '/home';
 
-// === Replace Astro.glob with import.meta.glob ===
 const postModules = import.meta.glob('../data/blog-posts/*.md', { eager: true });
 
 const allPostsMetadata: BlogPost[] = Object.entries(postModules).map(([path, mod]: [string, any]) => {
@@ -29,6 +27,7 @@ const allPostsMetadata: BlogPost[] = Object.entries(postModules).map(([path, mod
     title: frontmatter.title,
     description: frontmatter.description,
     publishDate: frontmatter.publishDate,
+    author: frontmatter.author || "Anonymous",
     category: frontmatter.category,
     tags: frontmatter.tags,
     featuredImage: frontmatter.featuredImage,
@@ -36,297 +35,200 @@ const allPostsMetadata: BlogPost[] = Object.entries(postModules).map(([path, mod
   };
 });
 
-// === Sort posts by publish date ===
 const sortedPosts = allPostsMetadata.sort((a, b) => 
   new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf()
 );
 
-// Pagination settings
-const postsPerPage = 10;
-const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
-const currentPage = 1;
-const paginatedPosts = sortedPosts.slice(0, postsPerPage);
+const topPosts = sortedPosts.slice(0, 3);
 
-// Get unique categories
-const sections = [...new Set(sortedPosts.map(post => post.category).filter(Boolean))];
-
-// Helper to extract slug from file path
 const getPostUrl = (post: BlogPost) => {
   const parts = post.file.split('/');
   const filename = parts[parts.length - 1].replace(/\.md$/, '');
   return `/blog/${filename}`;
 };
 ---
-<BaseLayout title={title} description={description} permalink={permalink}>
+
+<BaseLayout title={siteTitle} description={description} permalink={permalink}>
   <div class="container">
+    <div class="section-header">
+      <h1>Featured Stories</h1>
+      <p>Discover our latest content</p>
+    </div>
 
-    <AstroSearch id="search" className="my-search" />
-
-    {/* <div class="section-navigation">
-      {sections.map(section => (
-        <a href={`/blog/category/${section.toLowerCase().replace(/\s+/g, '-')}`} class="section-link">
-          {section}
-        </a>
-      ))}
-    </div> --> */} 
-
-    <!-- Featured Post -->
-    {paginatedPosts.length > 0 && (
-      <div class="featured-post">
-        <h2>Featured Post</h2>
-        <div class="post-item featured">
-          {paginatedPosts[0].featuredImage && (
-            <div class="featured-image-container large">
+    <div class="bento-container">
+      <div class="bento-main">
+        <a href={getPostUrl(topPosts[0])}>
+          <div class="bento-image">
+            {topPosts[0].featuredImage && (
               <Image 
-                src={paginatedPosts[0].featuredImage} 
-                alt={paginatedPosts[0].title}
-                class="featured-image"
+                src={topPosts[0].featuredImage} 
+                alt={topPosts[0].title}
                 width={800}
                 height={450}
-                loading="lazy"
-                format="webp"
+                class="bento-img"
               />
-            </div>
-          )}
-          <div class="post-content">
-            <h2>
-              <a href={getPostUrl(paginatedPosts[0])}>{paginatedPosts[0].title}</a>
-            </h2>
-            <p>{paginatedPosts[0].description}</p>
-            
-            <div class="post-meta">
-              {paginatedPosts[0].category && (
-                <a href={`/blog/category/${paginatedPosts[0].category.toLowerCase().replace(/\s+/g, '-')}`} class="category">
-                  {paginatedPosts[0].category}
-                </a>
-              )}
-              {paginatedPosts[0].tags && paginatedPosts[0].tags.length > 0 && (
-                <div class="tags">
-                  {paginatedPosts[0].tags.map(tag => (
-                    <span class="tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            <div class="post-item-footer">
-              <span class="post-item-date">— {new Date(paginatedPosts[0].publishDate).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}</span>
-              <a href={getPostUrl(paginatedPosts[0])} class="read-more-btn">Continue Reading</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-
-    <h2>Latest Posts</h2>
-    {paginatedPosts.slice(1).map((post, index) => {
-      const href = getPostUrl(post);
-      return (
-        <div>
-          { index !== 0 && <hr /> }
-          <div class="post-item">
-            {post.featuredImage && (
-              <div class="featured-image-container">
-                <Image 
-                  src={post.featuredImage} 
-                  alt={post.title}
-                  class="featured-image"
-                  width={400}
-                  height={225}
-                  loading="lazy"
-                  format="webp"
-                />
-              </div>
             )}
-            <div class="post-content">
-              <h2>
-                <a href={href}>{post.title}</a>
-              </h2>
-              <p>{post.description}</p>
-              
-              <div class="post-meta">
-                {post.category && (
-                  <a href={`/blog/category/${post.category.toLowerCase().replace(/\s+/g, '-')}`} class="category">
-                    {post.category}
-                  </a>
-                )}
-                
-                {post.tags && post.tags.length > 0 && (
-                  <div class="tags">
-                    {post.tags.slice(0, 3).map(tag => (
-                      <a href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`} class="tag">{tag}</a>
-                    ))}
-                    {post.tags.length > 3 && <span class="tag">+{post.tags.length - 3}</span>}
-                  </div>
-                )}
-              </div>
-              
-              <div class="post-item-footer">
-                <span class="post-item-date">— {new Date(post.publishDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}</span>
-                <a href={`${href}#disqus_thread`} class="read-more-btn">Continue Reading</a>
-              </div>
-            </div>
           </div>
-        </div>
-      )
-    })}
-    
-    {totalPages > 1 && (
-      <Pagination currentPage={currentPage} totalPages={totalPages} urlBase="/blog" />
-    )}
-    <!-- Disqus Comment Count Script -->
-    <script id="dsq-count-scr" src="//luminary-1.disqus.com/count.js" async></script>
+          <div class="bento-content">
+            
+            <h2>{topPosts[0].title}</h2>
+            <p class="main-description">{topPosts[0].description}</p>
+            <div class="post-meta">
+              <span class="author">By {topPosts[0].author}</span>
+              <span class="date">{topPosts[0].publishDate}</span>
+            </div>
+            <div class="read-more">Read Full Article</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="bento-side bento-top">
+        <a href={getPostUrl(topPosts[1])}>
+          <div class="bento-image">
+            {topPosts[1].featuredImage && (
+              <Image 
+                src={topPosts[1].featuredImage} 
+                alt={topPosts[1].title}
+                width={800}
+                height={450}
+                class="bento-img"
+              />
+            )}
+          </div>
+          <div class="bento-content">
+            
+            <h3>{topPosts[1].title}</h3>
+            <p class="side-description">{topPosts[1].description}</p>
+            <div class="post-meta">
+              <span class="author">By {topPosts[1].author}</span>
+              <span class="date">{topPosts[1].publishDate}</span>
+            </div>
+            <div class="read-more">Read More</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="bento-side bento-bottom">
+        <a href={getPostUrl(topPosts[2])}>
+          <div class="bento-image">
+            {topPosts[2].featuredImage && (
+              <Image 
+                src={topPosts[2].featuredImage} 
+                alt={topPosts[2].title}
+                width={800}
+                height={450}
+                class="bento-img"
+              />
+            )}
+          </div>
+          <div class="bento-content">
+            
+            <h3>{topPosts[2].title}</h3>
+            <p class="side-description">{topPosts[2].description}</p>
+            <div class="post-meta">
+              <span class="author">By {topPosts[2].author}</span>
+              <span class="date">{topPosts[2].publishDate}</span>
+            </div>
+            <div class="read-more">Read More</div>
+          </div>
+        </a>
+      </div>
+    </div>
   </div>
 </BaseLayout>
 
-
 <style>
-  /* Add critical CSS here for better render performance */
+  /* Core Layout */
   .container {
-    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
   }
-  
-  .featured-post {
+
+  .section-header {
     margin-bottom: 2rem;
+    text-align: center;
   }
-  
-  .post-item {
+
+  .section-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-header p {
+    font-size: 1.1rem;
+  }
+
+  h2:hover, h3:hover{
+    color: var(--primary-color)
+  }
+
+  /* Bento Grid */
+  .bento-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 2rem;
   }
-  
-  @media (min-width: 768px) {
-    .post-item {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    }
+
+  .bento-main {
+    grid-row: span 2;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   }
-  
-  .featured-image-container {
+
+  .bento-side {
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  /* Links */
+  .bento-container a {
+    text-decoration: none;
+    color: inherit;
+    transition: color linear 0.15s;
+    display: block;
+  }
+
+  /* Image Cards */
+  .bento-image {
     width: 100%;
     overflow: hidden;
-    border-radius: 8px;
     aspect-ratio: 16/9;
   }
-  
-  .featured-image {
+
+  .bento-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-  }
-  
-  h2,
-  .post-item-footer {
-    font-family: var(--font-family-sans);
-    font-weight: 700;
+    transition: transform 0.3s ease;
   }
 
-  .section-navigation {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 30px;
-    justify-content: center;
+  .bento-image:hover .bento-img {
+    transform: scale(1.05);
   }
 
-  .section-link {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: var(--primary-color, #4a6cf7);
-    color: white;
-    border-radius: 20px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    font-weight: 500;
+  /* Content Cards */
+  .bento-content {
+    padding: 1rem;
   }
 
-  .section-link:hover {
-    background-color: white;
-    color: var(--primary-color, #4a6cf7);
-    box-shadow: 0 0 0 2px var(--primary-color, #4a6cf7);
+  .bento-main .bento-content {
+    padding: 1.5rem;
   }
 
-  .featured-post {
-    margin-bottom: 60px;
+  .bento-main h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
   }
 
-  .post-item {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 40px;
-  }
-
-  .post-item.featured {
-    border-radius: 12px;
-    padding: 20px;
-    background-color: rgba(74, 108, 247, 0.05);
-    border: 1px solid rgba(74, 108, 247, 0.1);
-  }
-
-  @media (min-width: 768px) {
-    .post-item {
-      flex-direction: row;
-      gap: 30px;
-    }
-  }
-
-  .featured-image-container {
-    flex: 0 0 280px;
-    margin-bottom: 20px;
-  }
-
-  .featured-image-container.large {
-    flex: 0 0 100%;
-    margin-bottom: 20px;
-  }
-
-  @media (min-width: 768px) {
-    .featured-image-container.large {
-      flex: 0 0 400px;
-    }
-  }
-
-  @media (min-width: 768px) {
-    .featured-image-container {
-      margin-bottom: 0;
-    }
-  }
-
-  .featured-image {
-    width: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-
-  .post-content {
-    flex: 1;
-  }
-
-  .post-item-date {
-    color: var(--text-secondary);
-    text-align: left;
-    text-transform: uppercase;
-    margin-right: 16px;
-  }
-
-  .post-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
+  .bento-side h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
   }
 
   .category {
@@ -354,32 +256,57 @@ const getPostUrl = (post: BlogPost) => {
     font-weight: 500;
   }
 
-  .post-item-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
+  .author{
+    font-family: var(--font-family-sans-serif);
+  }
+  .date{
+    text-transform: uppercase;
+    font-family: var(--font-family-sans);
+  }
+  .main-description,
+  .side-description {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.95rem;
   }
 
-  .read-more-btn {
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: var(--primary-color, #4a6cf7);
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .read-more {
+    background-color: var(--primary-color);
     color: white;
+    display: inline-block;
+    padding: 6px 12px;
     border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: background-color 0.4s ease-in;
+    font-size: 0.8rem;
     font-weight: 500;
   }
 
-  .read-more-btn:hover {
-    background-color: white;
-    color: var(--primary-color, #4a6cf7);
-    transition: background-color 0.4s ease-out;
+  .read-more:hover {
+    border: 1px solid var(--primary-color);
+    background-color: inherit;
+    color: var(--primary-color);
   }
 
-  hr {
-    margin: 60px auto;
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .bento-container {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .bento-main {
+      grid-row: auto;
+    }
   }
 </style>
