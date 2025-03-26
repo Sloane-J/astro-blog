@@ -7,11 +7,10 @@ import '../styles/global.css';
 export interface Props {
   title: string;
   description: string;
-  tagline: tagline;
   permalink: string;
   current?: string;
 }
-const { title, description, tagline, permalink, current } = Astro.props;
+const { title, description, permalink, current } = Astro.props;
 ---
 <html lang="en">
 <head>

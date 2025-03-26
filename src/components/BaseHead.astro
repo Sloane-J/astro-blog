@@ -18,6 +18,8 @@ const socialUrl = Astro.site.href + 'assets/social.png'
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="lang" content="en">
 
+<meta name="apple-mobile-web-app-title" content="NextFrame Digest">
+<meta name="application-name" content="NextFrame Digest">
 <!-- Favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -28,6 +30,10 @@ const socialUrl = Astro.site.href + 'assets/social.png'
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+<link rel="canonical" href="https://iztar.netlify.app/">
+<meta property="og:locale" content="en_US">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<link rel="sitemap" href="/sitemap-index.xml" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />

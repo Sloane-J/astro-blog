@@ -14,8 +14,8 @@ export interface BlogPost {
 }
 
 const siteTitle = "NextFrame Digest | Jump ahead, stay updated";
-const description = 'NextFrame Digest is a dynamic blog that keeps you one step ahead with the freshest updates in news, groundbreaking science, cutting-edge tech, and a preview of what’s next in movies and games. Every “next frame” reveals a compelling story—whether it’s a thrilling trailer or a world-changing discovery.';
-const tagline = "Jump ahead, stay updated.";
+const description = 'NextFrame Digest is a dynamic blog that keeps you one step ahead with the freshest updates in news, groundbreaking science, cutting-edge tech, and a preview of what’s next in movies and games. Every “next frame” reveals a compelling story—whether it’s a thrilling trailer or a world-changing discovery';
+
 const permalink = Astro.site 
   ? new URL('/home', Astro.site).href 
   : '/home';
@@ -40,7 +40,9 @@ const sortedPosts = allPostsMetadata.sort((a, b) =>
   new Date(b.publishDate).valueOf() - new Date(a.publishDate).valueOf()
 );
 
-const topPosts = sortedPosts.slice(0, 3);
+const latestPost = sortedPosts[0];
+const featuredPosts = sortedPosts.slice(1, 3);
+const sidebarPosts = sortedPosts.slice(3, 6);
 
 const getPostUrl = (post: BlogPost) => {
   const parts = post.file.split('/');
@@ -50,270 +52,125 @@ const getPostUrl = (post: BlogPost) => {
 ---
 
 <BaseLayout title={siteTitle} description={description} permalink={permalink}>
-  <div class="container">
-    <div class="section-header">
-      <h1>Featured Stories</h1>
-      <p>Discover our latest content</p>
-    </div>
-
-    <div class="bento-container">
-      <div class="bento-main">
-        <a href={getPostUrl(topPosts[0])}>
-          <div class="bento-image">
-            {topPosts[0].featuredImage && (
-              <Image 
-                src={topPosts[0].featuredImage} 
-                alt={topPosts[0].title}
-                width={800}
-                height={450}
-                class="bento-img"
-              />
-            )}
-          </div>
-          <div class="bento-content">
-            
-            <h2>{topPosts[0].title}</h2>
-            <p class="main-description">{topPosts[0].description}</p>
-            <div class="post-meta">
-              <span class="author">By {topPosts[0].author}</span>
-              <span class="date">{topPosts[0].publishDate}</span>
+  <div class="py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Main Content Area */}
+      <div class="lg:col-span-2">
+        {latestPost && (
+          <div class="overflow-hidden mb-8">
+            <div class="group">
+              {latestPost.featuredImage && (
+                <a href={getPostUrl(latestPost)}>
+                  <Image 
+                    src={latestPost.featuredImage} 
+                    alt={latestPost.title}
+                    class="w-full h-96 object-cover"
+                    width={800}
+                    height={450}
+                  />
+                </a>
+              )}
+              <div class="p-6">
+                <a href={getPostUrl(latestPost)} class="block">
+                  <h2 class="text-2xl font-bold mb-4 group-hover:text-[#548e9b transition-colors duration-100">
+                    {latestPost.title}
+                  </h2>
+                </a>
+                <p class="mb-4">{latestPost.description}</p>
+                <div class="flex justify-between text-sm">
+                  <span class="author">By {latestPost.author}</span>
+                  <span>{latestPost.publishDate}</span>
+                </div>
+                <div class="mt-4">
+                  <a class="read-more-btn" href={getPostUrl(latestPost)} class="px-4 py-2 rounded">
+                    Read Full Article
+                  </a>
+                </div>
+              </div>
             </div>
-            <div class="read-more">Read Full Article</div>
           </div>
-        </a>
+        )}
+
+        {/* Featured Stories */}
+        <div class="grid md:grid-cols-2 gap-6">
+          {featuredPosts.map((post) => (
+            <div class="overflow-hidden group">
+              {post.featuredImage && (
+                <a href={getPostUrl(post)}>
+                  <Image 
+                    src={post.featuredImage} 
+                    alt={post.title}
+                    class="w-full h-48 object-cover"
+                    width={400}
+                    height={225}
+                  />
+                </a>
+              )}
+              <div class="p-4">
+                <a href={getPostUrl(post)} class="block">
+                  <h3 class="text-lg font-semibold mb-2 group-hover:text-[#548e9b] transition-colors duration-100">
+                    {post.title}
+                  </h3>
+                </a>
+                <p class="text-sm mb-3">{post.description}</p>
+                <div class="flex justify-between text-xs">
+                  <span class="author">By {post.author}</span>
+                  <span>{post.publishDate}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div class="bento-side bento-top">
-        <a href={getPostUrl(topPosts[1])}>
-          <div class="bento-image">
-            {topPosts[1].featuredImage && (
-              <Image 
-                src={topPosts[1].featuredImage} 
-                alt={topPosts[1].title}
-                width={800}
-                height={450}
-                class="bento-img"
-              />
-            )}
+      {/* Sidebar */}
+      <div class="lg:col-span-1 p-6">
+        <h3 class="text-xl font-bold mb-6">Latest Stories</h3>
+        {sidebarPosts.map((post) => (
+          <div class="mb-6 pb-6 border-b last:border-b-0 group">
+            <a href={getPostUrl(post)} class="block">
+              <h4 class="text-md font-semibold mb-2 hover:text-[#548e9b] transition-colors duration-100">
+                {post.title}
+              </h4>
+              <div class="flex justify-between text-xs">
+                
+                <span>{post.publishDate}</span>
+              </div>
+            </a>
           </div>
-          <div class="bento-content">
-            
-            <h3>{topPosts[1].title}</h3>
-            <p class="side-description">{topPosts[1].description}</p>
-            <div class="post-meta">
-              <span class="author">By {topPosts[1].author}</span>
-              <span class="date">{topPosts[1].publishDate}</span>
-            </div>
-            <div class="read-more">Read More</div>
-          </div>
-        </a>
-      </div>
-
-      <div class="bento-side bento-bottom">
-        <a href={getPostUrl(topPosts[2])}>
-          <div class="bento-image">
-            {topPosts[2].featuredImage && (
-              <Image 
-                src={topPosts[2].featuredImage} 
-                alt={topPosts[2].title}
-                width={800}
-                height={450}
-                class="bento-img"
-              />
-            )}
-          </div>
-          <div class="bento-content">
-            
-            <h3>{topPosts[2].title}</h3>
-            <p class="side-description">{topPosts[2].description}</p>
-            <div class="post-meta">
-              <span class="author">By {topPosts[2].author}</span>
-              <span class="date">{topPosts[2].publishDate}</span>
-            </div>
-            <div class="read-more">Read More</div>
-          </div>
-        </a>
+        ))}
       </div>
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  /* Core Layout */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
+  a {
+    text-decoration: none;
   }
 
-  .section-header {
-    margin-bottom: 2rem;
-    text-align: center;
+  .author {
+    font-family: var(--font-family-serif, 'Merriweather', serif);
+    font-weight: 700;
+}
+
+.read-more-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: var(--primary-color, #4a6cf7);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.4s ease-in;
+    font-weight: 500;
   }
 
-  .section-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .section-header p {
-    font-size: 1.1rem;
-  }
-
-  h2, h3{
-    color: var(--primary-color)
+  .read-more-btn:hover {
+    background-color: white;
+    color: var(--primary-color, #4a6cf7);
+    transition: background-color 0.4s ease-out;
   }
 
   
-  h2:hover, h3:hover{
-    color: var(--seconday-color)
-  }
-
-
-  /* Bento Grid */
-  .bento-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 2rem;
-  }
-
-  .bento-main {
-    grid-row: span 2;
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-
-  .bento-side {
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-
-  /* Links */
-  .bento-container a {
-    text-decoration: none;
-    color: inherit;
-    transition: color linear 0.15s;
-    display: block;
-  }
-
-  /* Image Cards */
-  .bento-image {
-    width: 100%;
-    overflow: hidden;
-    aspect-ratio: 16/9;
-  }
-
-  .bento-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .bento-image:hover .bento-img {
-    transform: scale(1.05);
-  }
-
-  /* Content Cards */
-  .bento-content {
-    padding: 1rem;
-  }
-
-  .bento-main .bento-content {
-    padding: 1.5rem;
-  }
-
-  .bento-main h2 {
-    font-size: 1.8rem;
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
-  }
-
-  .bento-side h3 {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-  }
-
-  .category {
-    background-color: var(--primary-color, #4a6cf7);
-    color: white;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .tag {
-    background-color: #e0e0e0;
-    color: #555555;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-
-  .author{
-    font-family: var(--font-family-sans-serif);
-  }
-  .date{
-    text-transform: uppercase;
-    font-family: var(--font-family-sans);
-  }
-  .main-description,
-  .side-description {
-    margin-bottom: 0.75rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.95rem;
-  }
-
-  .post-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .read-more {
-    background-color: var(--primary-color);
-    color: white;
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
-
-  .read-more:hover {
-    border: 1px solid var(--primary-color);
-    background-color: inherit;
-    color: var(--primary-color);
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .bento-container {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-    
-    .bento-main {
-      grid-row: auto;
-    }
-  }
 </style>
