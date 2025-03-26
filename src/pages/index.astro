@@ -13,7 +13,7 @@ export interface BlogPost {
   file: string;
 }
 
-const siteTitle = "NextFrame Digest";
+const siteTitle = "NextFrame Digest | Jump ahead, stay updated";
 const description = 'NextFrame Digest is a dynamic blog that keeps you one step ahead with the freshest updates in news, groundbreaking science, cutting-edge tech, and a preview of what’s next in movies and games. Every “next frame” reveals a compelling story—whether it’s a thrilling trailer or a world-changing discovery.';
 const tagline = "Jump ahead, stay updated.";
 const permalink = Astro.site 
@@ -160,9 +160,15 @@ const getPostUrl = (post: BlogPost) => {
     font-size: 1.1rem;
   }
 
-  h2:hover, h3:hover{
+  h2, h3{
     color: var(--primary-color)
   }
+
+  
+  h2:hover, h3:hover{
+    color: var(--seconday-color)
+  }
+
 
   /* Bento Grid */
   .bento-container {
