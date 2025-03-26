@@ -15,10 +15,10 @@ const socialUrl = Astro.site.href + 'assets/social.png'
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="lang" content="en">
 
-<!--<link rel="icon" type="image/x-icon" href="/favicon.ico" />-->
-
+<!-- Favicon -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -43,62 +43,63 @@ const socialUrl = Astro.site.href + 'assets/social.png'
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={socialUrl} />
 
+<!-- Structured Data -->
 <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    "@id": "https://iztar.netlify.app/blog/",
-    "mainEntityOfPage": "https://iztar.netlify.app/blog",
-    "name": "Your Blog Title",
-    "description": "A description of your blog that summarizes its focus and content.",
-    "publisher": {
-      "@type": "Organization",
-      "@id": "https://iztar.netlify.app",
-      "name": "Luminary",
-      "logo": {
+{
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": "https://yourblogurl.com/blog/",
+  "mainEntityOfPage": "https://yourblogurl.com/blog",
+  "name": "{title}",
+  "description": "{description}",
+  "publisher": {
+    "@type": "Organization",
+    "@id": "https://yourblogurl.com",
+    "name": "Your Organization Name",
+    "logo": {
+      "@type": "ImageObject",
+      "@id": "https://yourblogurl.com/assets/logo.png",
+      "url": "https://yourblogurl.com/assets/logo.png",
+      "width": 600,
+      "height": 60
+    }
+  },
+  "blogPost": [
+    {
+      "@type": "BlogPosting",
+      "@id": "https://yourblogurl.com/blog/post-1/#BlogPosting",
+      "mainEntityOfPage": "https://yourblogurl.com/blog/post-1/",
+      "headline": "Post Title 1",
+      "name": "Post Title 1",
+      "description": "A short description of Post 1.",
+      "datePublished": "2025-03-26",
+      "dateModified": "2025-03-26",
+      "author": {
+        "@type": "Person",
+        "@id": "https://yourblogurl.com/about/#Person",
+        "name": "Samuel Dorkey"
+      },
+      "image": {
         "@type": "ImageObject",
-        "@id": "https://iztar.netlify.app/assets/logo.png",
-        "url": "https://iztar.netlify.app/assets/logo.png",
-        "width": 600,
-        "height": 60
-      }
-    },
-    "blogPost": [
-      {
-        "@type": "BlogPosting",
-        "@id": "https://iztar.netlify.app/blog/post-1/#BlogPosting",
-        "mainEntityOfPage": "https://iztar.netlify.app/blog/post-1/",
-        "headline": "Post Title 1",
-        "name": "Post Title 1",
-        "description": "A short description of Post 1.",
-        "datePublished": "2023-10-01",
-        "dateModified": "2023-10-01",
-        "author": {
-          "@type": "Person",
-          "@id": "https://iztar.netlify.app/about/#Person",
-          "name": "Samuel Dorkey"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "@id": "https://iztar.netlify.app/assets/images/post-1.jpg",
-          "url": "https://iztar.netlify.app/assets/images/post-1.jpg",
-          "width": 800,
-          "height": 600
-        },
-        "url": "https://iztar.netlify.app/blog/post-1/",
-        "keywords": [
-          "Keyword1",
-          "Keyword2",
-          "Keyword3"
-        ]
-      }
-    ]
-  }
-  </script>
+        "@id": "https://yourblogurl.com/assets/images/post-1.jpg",
+        "url": "https://yourblogurl.com/assets/images/post-1.jpg",
+        "width": 800,
+        "height": 600
+      },
+      "url": "https://yourblogurl.com/blog/post-1/",
+      "keywords": [
+        "Keyword1",
+        "Keyword2",
+        "Keyword3"
+      ]
+    }
+  ]
+}
+</script>
 
 <ClientRouter />
 
-<!-- This is intentionally inlined to avoid FOUC -->
+<!-- Theme Management -->
 <script is:inline>
   const root = document.documentElement
   const theme = localStorage.getItem('theme')

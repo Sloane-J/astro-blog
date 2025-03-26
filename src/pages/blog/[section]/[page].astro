@@ -65,7 +65,7 @@ const allPosts = Object.values(postModules).map(mod => mod.frontmatter);
 const uniqueSections = [...new Set(allPosts.map(post => post.category).filter(Boolean))];
 const relatedSections = uniqueSections.filter(s => s !== sectionName);
 
-const title = `${sectionName} | Luminary ☀`;
+const title = `${sectionName} | NextFrame Digest`;
 const description = `Latest articles in ${sectionName}`;
 const permalink = Astro.site ? new URL(`/blog/${section}/${page.currentPage}`, Astro.site).href : `/blog/${section}/${page.currentPage}`;
 
