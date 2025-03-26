@@ -76,7 +76,11 @@ export default defineConfig({
       JavaScript: true,
       SVG: true,
     }),
-    sitemap(),
+    sitemap({
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: new Date('2025-03-26'),
+    }),
     pagefind({
       // Configuration options for Pagefind
       exclude: ["**/admin/**/*"],
