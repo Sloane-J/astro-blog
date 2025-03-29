@@ -8,6 +8,7 @@ import tailwind from "@astrojs/tailwind";
 import compress from "astro-compress";
 import sitemap from "@astrojs/sitemap";
 import pagefind from "astro-pagefind";
+import robotsTxt from 'astro-robots-txt';
 //import { getHighlighter } from 'shiki';
 
 // https://astro.build/config
@@ -21,6 +22,8 @@ export default defineConfig({
   
   // Your site URL
   site: 'https://iztar.netlify.app',
+
+  integrations: robotsTxt(),
   
   // Build options for performance
   build: {
