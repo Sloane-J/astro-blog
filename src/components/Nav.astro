@@ -1,37 +1,73 @@
 ---
 import ThemeToggleButton from './ThemeToggleButton.svelte';
+import Logo from './Logo.astro';
 
-export const current = '';
+interface Props {
+  current: string;
+}
+
+const { current } = Astro.props;
 ---
 
 <script>
-  // Client-side JavaScript that runs in the browser
-  document.addEventListener('DOMContentLoaded', () => {
-    // Get references to elements
-    const menuButton = document.querySelector('.menu-icon');
-    const navLinks = document.querySelector('.nav-links');
-    
-    // Add click event to toggle menu
-    if (menuButton) {
-      menuButton.addEventListener('click', () => {
-        navLinks.classList.toggle('open');
-        
-        // Change menu icon based on state
-        const isOpen = navLinks.classList.contains('open');
-        menuButton.innerHTML = isOpen ? '✕' : '☰';
+  class NavigationManager {
+    private menuButton: HTMLButtonElement | null;
+    private navLinks: HTMLDivElement | null;
+    private documentClickHandler: (event: MouseEvent) => void;
+
+    constructor() {
+      this.menuButton = document.querySelector('.menu-icon');
+      this.navLinks = document.querySelector('.nav-links');
+      
+      this.documentClickHandler = this.handleDocumentClick.bind(this);
+      this.init();
+    }
+
+    private init(): void {
+      if (this.menuButton) {
+        this.menuButton.addEventListener('click', () => this.toggleMenu());
+      }
+      
+      document.addEventListener('click', this.documentClickHandler);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') this.closeMenu();
       });
     }
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', (event) => {
-      if (navLinks && 
-          navLinks.classList.contains('open') && 
-          !navLinks.contains(event.target) && 
-          event.target !== menuButton) {
-        navLinks.classList.remove('open');
-        menuButton.innerHTML = '☰';
+
+    private toggleMenu(): void {
+      if (!this.navLinks || !this.menuButton) return;
+      
+      const isOpen = this.navLinks.classList.toggle('open');
+      this.menuButton.innerHTML = isOpen ? '✕' : '☰';
+      this.menuButton.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    private closeMenu(): void {
+      if (!this.navLinks || !this.menuButton) return;
+      
+      this.navLinks.classList.remove('open');
+      this.menuButton.innerHTML = '☰';
+      this.menuButton.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    private handleDocumentClick(event: MouseEvent): void {
+      if (!this.navLinks || !this.menuButton) return;
+      
+      const target = event.target as HTMLElement;
+      if (
+        this.navLinks.classList.contains('open') && 
+        !this.navLinks.contains(target) && 
+        target !== this.menuButton
+      ) {
+        this.closeMenu();
       }
-    });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new NavigationManager();
   });
 </script>
 
@@ -41,19 +77,22 @@ export const current = '';
     display: flex;
     font-family: var(--font-family-sans);
     font-weight: 700;
-    justify-content: flex-end;
+    justify-content: space-between;
     text-transform: uppercase;
     position: relative;
+    padding: 1rem;
   }
+
 
   .menu-icon {
     display: none;
     cursor: pointer;
     font-size: 1.8rem;
-    background: var(--background-body);
+    background: transparent;
     border: none;
     padding: 5px;
     z-index: 100;
+    color: var(--text-main);
   }
 
   .nav-links {
@@ -62,7 +101,7 @@ export const current = '';
     align-items: center;
   }
 
-  a {
+  .nav-links a {
     color: var(--text-main);
     text-decoration: none;
     padding: 10px 5px;
@@ -70,31 +109,28 @@ export const current = '';
     position: relative;
     min-width: 70px;
     text-align: center;
+    transition: opacity 0.3s ease;
   }
 
-  a:not(.selected) {
+  .nav-links a:not(.selected) {
     opacity: 0.7;
   }
 
-  a::before {
+  .nav-links a::before {
     content: '';
     position: absolute;
-    transition: transform .3s ease;
+    transition: transform 0.3s ease;
     left: 0;
     bottom: 0;
     width: 100%;
     height: 2px;
-    background: var(--background-body);
+    background: var(--text-main);
     transform: scaleX(0);
   }
 
-  a:hover::before,
-  .selected::before {
+  .nav-links a:hover::before,
+  .nav-links .selected::before {
     transform: scaleX(1);
-  }
-
-  .selected::before {
-    background: var(--background-body);
   }
 
   .theme-toggle-container {
@@ -103,14 +139,11 @@ export const current = '';
   }
 
   @media screen and (max-width: 768px) {
-    nav {
-      justify-content: space-between;
-    }
-    
     .menu-icon {
       display: block;
       order: 1;
     }
+
 
     .nav-links {
       display: none;
@@ -127,12 +160,14 @@ export const current = '';
       justify-content: center;
       align-items: center;
       gap: 30px;
+      transition: opacity 0.3s ease;
     }
 
     .nav-links.open {
       display: flex;
+      opacity: 1;
     }
-    
+
     .nav-links a {
       width: auto;
       text-align: center;
@@ -140,9 +175,9 @@ export const current = '';
       font-size: 1.2rem;
       max-width: 200px;
     }
-    
+
     .theme-toggle-container {
-      order: 0;
+      order: 2;
       margin-left: 0;
       margin-right: auto;
       z-index: 99;
@@ -152,26 +187,27 @@ export const current = '';
 </style>
 
 <nav>
-  
-  
-  
-  <!-- Hamburger Button for Mobile -->
-  <button class="menu-icon" aria-label="Toggle navigation menu">
+
+
+  <button 
+    class="menu-icon" 
+    aria-label="Toggle navigation menu"
+    aria-expanded="false"
+    aria-controls="nav-links"
+  >
     ☰
   </button>
 
-  <!-- Navigation Links -->
-  <div class="nav-links">
-    <a class={current === "" ? "selected" : ""} href='/'>home</a>
-    <a class={current === "about" ? "selected" : ""} href='/about'>about</a>
-    <a class={current === "blog/news" ? "selected" : ""} href='/blog/news/1'>news</a>
-    <a class={current === "blog/tech-and-science" ? "selected" : ""} href='/blog/tech-and-science/1'>tech</a>
-    <a class={current === "blog/deals" ? "selected" : ""} href='/blog/deals/1'>deals</a>
-    <a class={current === "blog/trailers" ? "selected" : ""} href='/blog/trailers/1'>trailers</a>
-    <a class={current === "blog/entertainment" ? "selected" : ""} href='/blog/entertainment/1'>entertainment</a>
+  <div class="nav-links" id="nav-links" role="navigation">
+    <a class={current === "" ? "selected" : ""} href="/">Home</a>
+    <a class={current === "about" ? "selected" : ""} href="/about">About</a>
+    <a class={current === "blog/news" ? "selected" : ""} href="/blog/news/1">News</a>
+    <a class={current === "blog/tech-and-science" ? "selected" : ""} href="/blog/tech-and-science/1">Technology</a>
+    <a class={current === "blog/deals" ? "selected" : ""} href="/blog/deals/1">Deals</a>
+    <a class={current === "blog/trailers" ? "selected" : ""} href="/blog/trailers/1">Trailers</a>
+    <a class={current === "blog/entertainment" ? "selected" : ""} href="/blog/entertainment/1">Entertainment</a>
   </div>
 
-    <!-- Theme Toggle positioned on the right on mobile -->
   <div class="theme-toggle-container">
     <ThemeToggleButton client:load />
   </div>

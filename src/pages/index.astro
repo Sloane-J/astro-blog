@@ -46,7 +46,7 @@ const sortedPosts = allPostsMetadata.sort((a, b) =>
 // Use the pre-sorted array for different sections
 const latestPost = sortedPosts[0];
 const featuredPosts = sortedPosts.slice(1, 3);
-const sidebarPosts = sortedPosts.slice(3, 6);
+const sidebarPosts = sortedPosts.slice(3, 12);
 const newsPosts = sortedPosts.filter((post) => post.category === "News").slice(0, 2);
 const techSciencePosts = sortedPosts.filter((post) => post.category === "Tech and Science").slice(0, 2);
 const dealsPosts = sortedPosts.filter((post) => post.category === "Deals").slice(0, 2);
@@ -152,28 +152,23 @@ const getPostUrl = (post: BlogPost) => {
 
   {/* section code starts here */}
 
-  
-
-    {/* section code ends here */}
-
-
-
   <div class="py-8">
     <!-- Top Row Grid with News, Science, and Entertainment -->
-    <div class="grid grid-cols-1 sm:grid-cols-12 gap-8 mb-10">
-      <!-- News Section - Left Column -->
-      <div class="sm:col-span-4">
-        <h2 class="text-3xl font-bold mb-6">News</h2>
-  
-        {newsPosts
-          .slice(0, 2) // Use the pre-sorted array
-          .map((post) => (
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-8">
+      <!-- Left column: News + Deals -->
+      <div class="sm:col-span-4 flex flex-col">
+        <!-- News Section -->
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold mb-6">News</h2>
+          {newsPosts.slice(0, 2).map((post) => (
+            // ...existing news post code...
             <div class="mb-8">
               <div class="flex">
                 <div class="flex-grow pr-4">
                   <a href={getPostUrl(post)} class="block hover:text-[#548e9b] transition-colors">
-                    <h3 class="text-md font-semibold mb-1">{post.title}</h3>
+                    <h3 class="text-sm font-semibold mb-1">{post.title}</h3>
                   </a>
+                  <p class="mb-4 text-sm">{latestPost.description}</p>
                 </div>
                 <div class="flex-shrink-0">
                   <a href={getPostUrl(post)} class="block">
@@ -183,39 +178,44 @@ const getPostUrl = (post: BlogPost) => {
                           src={post.featuredImage} 
                           alt={post.alt || post.title} 
                           class="object-cover w-full h-full"
+                          width={400}
+  height={225}
                         />
                       )}
                     </div>
+                    
                   </a>
                 </div>
               </div>
               <div class="border-b border-gray-700 mt-6"></div>
             </div>
           ))}
-      </div>
-  
-      <!-- Tech and Science Section - Middle Column -->
-      <div class="sm:col-span-4">
-        <h2 class="text-3xl font-bold mb-6">Technology & Science</h2>
-  
-        {techSciencePosts
-          .slice(0, 2) // Use the pre-sorted array
-          .map((post) => (
+
+        </div>
+        
+        <!-- Deals Section -->
+        <div>
+          <h2 class="text-3xl font-bold mb-6">Deals</h2>
+          {dealsPosts.slice(0, 2).map((post) => (
+            // ...existing deals post code...
             <div class="mb-8">
               <div class="flex">
                 <div class="flex-grow pr-4">
-                  <a href={getPostUrl(post)} class="block hover:text-[var(--primary-color)] transition-colors">
-                    <h3 class="text-md font-semibold mb-1">{post.title}</h3>
+                  <a href={getPostUrl(post)} class="block hover:text-[#548e9b] transition-colors">
+                    <h3 class="text-sm font-semibold mb-1">{post.title}</h3>
                   </a>
+                  <p class="mb-4 text-sm">{latestPost.description}</p>
                 </div>
                 <div class="flex-shrink-0">
                   <a href={getPostUrl(post)} class="block">
                     <div class="w-32 h-24 relative overflow-hidden">
                       {post.featuredImage && (
-                        <Image 
+                       <Image 
                           src={post.featuredImage} 
                           alt={post.alt || post.title} 
                           class="object-cover w-full h-full"
+                          width={128}
+  height={96}
                         />
                       )}
                     </div>
@@ -225,30 +225,106 @@ const getPostUrl = (post: BlogPost) => {
               <div class="border-b border-gray-700 mt-6"></div>
             </div>
           ))}
+          
+        </div>
       </div>
   
-      <!-- Entertainment Section - Right Column (extends vertically) -->
+      <!-- Middle column: Tech & Science + Trailers -->
+      <div class="sm:col-span-4 flex flex-col">
+        <!-- Tech and Science Section -->
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold mb-6">Technology</h2>
+          {techSciencePosts.slice(0, 2).map((post) => (
+            // ...existing tech science post code...
+            <div class="mb-8">
+              <div class="flex">
+                <div class="flex-grow pr-4">
+                  <a href={getPostUrl(post)} class="block hover:text-[#548e9b] transition-colors">
+                    <h3 class="text-sm font-semibold mb-1">{post.title}</h3>
+                  </a>
+                  <p class="mb-4 text-sm">{latestPost.description}</p>
+                </div>
+                <div class="flex-shrink-0">
+                  <a href={getPostUrl(post)} class="block">
+                    <div class="w-32 h-24 relative overflow-hidden">
+                      {post.featuredImage && (
+                       <Image 
+                          src={post.featuredImage} 
+                          alt={post.alt || post.title} 
+                          class="object-cover w-full h-full"
+                          width={128}
+  height={96}
+                        />
+                      )}
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="border-b border-gray-700 mt-6"></div>
+            </div>
+          
+          ))}
+        </div>
+  
+        <!-- Trailers Section -->
+        <div>
+          <h2 class="text-3xl font-bold mb-6">Trailers</h2>
+          {trailerPosts.slice(0, 2).map((post) => (
+            // ...existing trailers post code...
+            <div class="mb-8">
+              <div class="flex">
+                <div class="flex-grow pr-4">
+                  <a href={getPostUrl(post)} class="block hover:text-[#548e9b] transition-colors">
+                    <h3 class="text-sm font-semibold mb-1">{post.title}</h3>
+                  </a>
+                  <p class="mb-4 text-sm">{latestPost.description}</p>
+                </div>
+                <div class="flex-shrink-0">
+                  <a href={getPostUrl(post)} class="block">
+                    <div class="w-32 h-24 relative overflow-hidden">
+                      {post.featuredImage && (
+                       <Image 
+                          src={post.featuredImage} 
+                          alt={post.alt || post.title} 
+                          class="object-cover w-full h-full"
+                          width={128}
+  height={96}
+                        />
+                      )}
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="border-b border-gray-700 mt-6"></div>
+            </div>
+          
+          ))}
+        </div>
+      </div>
+  
+      <!-- Right column: Entertainment -->
       <div class="sm:col-span-4">
         <h2 class="text-3xl font-bold mb-6">Entertainment</h2>
-  
-        {entertainmentPosts
-          .slice(0, 5) // Use the pre-sorted array
-          .map((post) => (
-            <div class="mb-8">
+        {entertainmentPosts.slice(0, 5).map((post) => (
+          // ...existing entertainment post code...
+          <div class="mb-8">
               <div class="flex">
                 <div class="flex-grow pr-4">
-                  <a href={getPostUrl(post)} class="block hover:text-[var(--primary-color)] transition-colors">
-  <h3 class="text-md font-semibold mb-1">{post.title}</h3>
-</a>
+                  <a href={getPostUrl(post)} class="block hover:text-[#548e9b] transition-colors">
+                    <h3 class="text-sm font-semibold mb-1">{post.title}</h3>
+                  </a>
+                  <p class="mb-4 text-sm">{latestPost.description}</p>
                 </div>
                 <div class="flex-shrink-0">
                   <a href={getPostUrl(post)} class="block">
                     <div class="w-32 h-24 relative overflow-hidden">
                       {post.featuredImage && (
-                        <Image 
+                       <Image 
                           src={post.featuredImage} 
                           alt={post.alt || post.title} 
                           class="object-cover w-full h-full"
+                          width={128}
+  height={96}
                         />
                       )}
                     </div>
@@ -257,82 +333,15 @@ const getPostUrl = (post: BlogPost) => {
               </div>
               <div class="border-b border-gray-700 mt-6"></div>
             </div>
-          ))}
+          
+        ))}
       </div>
-    </div>
-  
-    <!-- Bottom Row Grid with Deals and Trailers -->
-    <div class="grid grid-cols-1 sm:grid-cols-12 gap-8">
-      <!-- Deals Section - Bottom Left -->
-      <div class="sm:col-span-4">
-        <h2 class="text-3xl font-bold mb-6">Deals</h2>
-  
-        {dealsPosts
-          .slice(0, 2) // Use the pre-sorted array
-          .map((post) => (
-            <div class="mb-8">
-              <div class="flex">
-                <div class="flex-grow pr-4">
-                  <a href={getPostUrl(post)} class="block hover:text-[var(--primary-color)] transition-colors">
-  <h3 class="text-md font-semibold mb-1">{post.title}</h3>
-</a>
-                </div>
-                <div class="flex-shrink-0">
-                  <a href={getPostUrl(post)} class="block">
-                    <div class="w-32 h-24 relative overflow-hidden">
-                      {post.featuredImage && (
-                        <Image 
-                          src={post.featuredImage} 
-                          alt={post.alt || post.title} 
-                          class="object-cover w-full h-full"
-                        />
-                      )}
-                    </div>
-                  </a>
-                </div>
-              </div>
-              <div class="border-b border-gray-700 mt-6"></div>
-            </div>
-          ))}
-      </div>
-  
-      <!-- Trailers Section - Bottom Middle -->
-      <div class="sm:col-span-4">
-        <h2 class="text-3xl font-bold mb-6">Trailers</h2>
-  
-        {trailerPosts
-          .slice(0, 2) // Use the pre-sorted array
-          .map((post) => (
-            <div class="mb-8">
-              <div class="flex">
-                <div class="flex-grow pr-4">
-                  <a href={getPostUrl(post)} class="block hover:text-[var(--primary-color)] transition-colors">
-  <h3 class="text-md font-semibold mb-1">{post.title}</h3>
-</a>
-                </div>
-                <div class="flex-shrink-0">
-                  <a href={getPostUrl(post)} class="block">
-                    <div class="w-32 h-24 relative overflow-hidden">
-                      {post.featuredImage && (
-                        <Image 
-                          src={post.featuredImage} 
-                          alt={post.alt || post.title} 
-                          class="object-cover w-full h-full"
-                        />
-                      )}
-                    </div>
-                  </a>
-                </div>
-              </div>
-              <div class="border-b border-gray-700 mt-6"></div>
-            </div>
-          ))}
-      </div>
-  
     </div>
   </div>
-  
-  
+
+    {/* section code ends here */}
+
+
 
   </div>
 </div>

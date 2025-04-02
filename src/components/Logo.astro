@@ -1,16 +1,48 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className = '' } = Astro.props;
+---
+
 <style>
-  img {
+  .logo {
     display: block;
-    width: 75px;
+    z-index: 99;
   }
 
-  @media screen and (max-width: 520px) {
-    img {
-      display: none;
+  .logo img {
+    display: block;
+    width: 75px;
+    height: 50px;
+    transition: opacity 0.3s ease;
+  }
+
+  .logo:hover img {
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 768px) {
+    .logo {
+      order: 0;
+      position: relative;
+      z-index: 99;
+    }
+    
+    .logo img {
+      width: 60px;
+      height: 40px;
     }
   }
 </style>
 
-<a href="/">
-  <img alt="Blog Logo" src="/assets/logo.webp" width="75" height="50" />
+<a href="/" class={`logo ${className}`}>
+  <img 
+    alt="NextFrame Digest Logo" 
+    src="/assets/logo.webp" 
+    width="75" 
+    height="50"
+    loading="eager"
+  />
 </a>
