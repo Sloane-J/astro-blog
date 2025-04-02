@@ -8,19 +8,28 @@ const { current = '' } = Astro.props;
 <style>
   header {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin: 0 auto;
     max-width: 1400px;
-    padding: 2em;
+    padding: 1.5em 2em;
     width: 100%;
+    position: relative;
+    z-index: 10;
+  }
+
+  @media screen and (max-width: 768px) {
+    header {
+      padding: 1em 1.5em;
+    }
   }
 
   @media screen and (max-width: 520px) {
     header {
-      padding: 2em 0;
+      padding: 1em;
     }
   }
 </style>
-
 
 <header>
   <Logo />

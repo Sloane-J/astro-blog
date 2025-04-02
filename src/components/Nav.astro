@@ -5,9 +5,9 @@ export const current = '';
 let isOpen = false;
 
 // Function to toggle mobile menu
-const toggleMenu = () => {
+function toggleMenu() {
   isOpen = !isOpen;
-};
+}
 
 // Close menu when clicking outside (client-side only)
 let navElement;
@@ -34,13 +34,12 @@ let navElement;
   nav {
     align-items: center;
     display: flex;
-    flex: 1;
     font-family: var(--font-family-sans);
     font-weight: 700;
     justify-content: flex-end;
     text-transform: uppercase;
     position: relative;
-    padding: 0 15px;
+    padding: 0;
   }
 
   .menu-icon {
@@ -113,7 +112,7 @@ let navElement;
       display: none;
       flex-direction: column;
       position: absolute;
-      top: 100%;
+      top: calc(100% + 10px);
       right: 0;
       background: var(--background);
       width: 200px;
