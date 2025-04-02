@@ -89,7 +89,7 @@ export default defineConfig({
             required: true,
             ui: {
               component: "select",
-              options: ["News", "Tech and Science", "Trailers", "Deals"],
+              options: ["News", "Tech and Science", "Trailers", "Deals", "Entertainment"],
             },
           },
           {
