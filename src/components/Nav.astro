@@ -1,7 +1,34 @@
 ---
 import ThemeToggleButton from './ThemeToggleButton.svelte';
-const { current = '' } = Astro.props;
+
+export const current = '';
+let isOpen = false;
+
+// Function to toggle mobile menu
+const toggleMenu = () => {
+  isOpen = !isOpen;
+};
+
+// Close menu when clicking outside (client-side only)
+let navElement;
 ---
+
+<script>
+  // Client-side code for handling clicks outside the nav
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', (event) => {
+      const nav = document.querySelector('nav');
+      const menuIcon = document.querySelector('.menu-icon');
+      
+      if (nav && !nav.contains(event.target) && event.target !== menuIcon) {
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks.classList.contains('open')) {
+          navLinks.classList.remove('open');
+        }
+      }
+    });
+  }
+</script>
 
 <style>
   nav {
@@ -12,6 +39,24 @@ const { current = '' } = Astro.props;
     font-weight: 700;
     justify-content: flex-end;
     text-transform: uppercase;
+    position: relative;
+    padding: 0 15px;
+  }
+
+  .menu-icon {
+    display: none;
+    cursor: pointer;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    padding: 5px;
+    z-index: 100;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 15px;
+    align-items: center;
   }
 
   a {
@@ -20,7 +65,6 @@ const { current = '' } = Astro.props;
     padding: 10px 5px;
     display: block;
     position: relative;
-    margin-left: 20px;
     min-width: 70px;
     text-align: center;
   }
@@ -52,57 +96,70 @@ const { current = '' } = Astro.props;
 
   .theme-toggle-container {
     width: 75px;
-  }
-
-  @media screen and (max-width: 520px) {
-    .theme-toggle-container {
-      margin-right: 1em;
-    }
+    margin-left: 15px;
   }
 
   @media screen and (max-width: 768px) {
-  nav {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  a {
-    margin: 5px;
-    min-width: 60px;
-    font-size: 0.9rem;
-  }
-}
+    nav {
+      justify-content: space-between;
+    }
+    
+    .menu-icon {
+      display: block;
+      order: 1;
+    }
 
-@media screen and (max-width: 520px) {
-  nav {
-    justify-content: center;
-  }
-  
-  a {
-    margin: 3px;
-    min-width: 40px;
-    padding: 8px 3px;
-    font-size: 0.8rem;
-  }
-  
-  .theme-toggle-container {
-    width: 100%;
-    margin: 10px auto;
-    text-align: center;
-  }
-}
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--background);
+      width: 200px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      border-radius: 4px;
+      z-index: 99;
+    }
 
+    .nav-links.open {
+      display: flex;
+    }
+    
+    .nav-links a {
+      width: 100%;
+      text-align: left;
+      padding: 12px 15px;
+    }
+    
+    .theme-toggle-container {
+      order: 0;
+      margin-left: 0;
+      margin-right: auto;
+    }
+  }
 </style>
 
-<nav>
-  <a class={current === "" ? "selected" : ""} href='/'>home</a>
-  <a class={current === "about" ? "selected" : ""} href='/about'>about</a>
-  <a class={current === "blog/news" ? "selected" : ""} href='/blog/news/1'>news</a>
-  <a class={current === "blog/tech-and-science" ? "selected" : ""} href='/blog/tech-and-science/1'>tech</a>
-  <a class={current === "blog/deals" ? "selected" : ""} href='/blog/deals/1'>deals</a>
-  <a class={current === "blog/trailers" ? "selected" : ""} href='/blog/trailers/1'>trailers</a>
-  <a class={current === "blog/entertainment" ? "selected" : ""} href='/blog/entertainment/1'>entertainment</a>
+<nav bind:this={navElement}>
+  <!-- Theme Toggle positioned on the left on mobile -->
   <div class="theme-toggle-container">
     <ThemeToggleButton client:load />
+  </div>
+  
+  <!-- Hamburger Button for Mobile -->
+  <button class="menu-icon" aria-label="Toggle navigation menu" on:click={toggleMenu}>
+    {isOpen ? '✕' : '☰'}
+  </button>
+
+  <!-- Navigation Links with toggle class -->
+  <div class={`nav-links ${isOpen ? 'open' : ''}`}>
+    <a class={current === "" ? "selected" : ""} href='/'>home</a>
+    <a class={current === "about" ? "selected" : ""} href='/about'>about</a>
+    <a class={current === "blog/news" ? "selected" : ""} href='/blog/news/1'>news</a>
+    <a class={current === "blog/tech-and-science" ? "selected" : ""} href='/blog/tech-and-science/1'>tech</a>
+    <a class={current === "blog/deals" ? "selected" : ""} href='/blog/deals/1'>deals</a>
+    <a class={current === "blog/trailers" ? "selected" : ""} href='/blog/trailers/1'>trailers</a>
+    <a class={current === "blog/entertainment" ? "selected" : ""} href='/blog/entertainment/1'>entertainment</a>
   </div>
 </nav>

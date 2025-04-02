@@ -257,8 +257,9 @@ const entertainmentPosts = allPostsMetadata.filter((post) => post.category === "
           </div>
         ))}
       </div>
+      
   
-  <!-- Bottom Row Grid with Deals and Trailers -->
+    <!-- Bottom Row Grid with Deals and Trailers -->
   <div class="grid grid-cols-12 gap-8">
     <!-- Deals Section - Bottom Left -->
     <div class="col-span-4">
@@ -292,20 +293,23 @@ const entertainmentPosts = allPostsMetadata.filter((post) => post.category === "
             <div class="border-b border-gray-700 mt-6"></div>
           </div>
         ))}
-      </div>
+    </div>
     
     <!-- Trailers Section - Bottom Middle -->
     <div class="col-span-4">
       <h2 class="text-3xl font-bold mb-6">Trailers</h2>
       
-      {trailerPosts.map((post) => (
-        <div class="mb-8">
-          <div class="flex">
-            <div class="flex-grow pr-4">
-              <a href={getPostUrl(post)} class="block hover:text-[#548e9b] transition-colors">
-                <h3 class="text-md font-semibold mb-1">{post.title}</h3>
-              </a>
-            </div>
+      {trailerPosts
+        .sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate)) // Sort by date
+        .slice(0, 2) // Get only the latest 2 posts
+        .map((post) => (
+          <div class="mb-8">
+            <div class="flex">
+              <div class="flex-grow pr-4">
+                <a href={getPostUrl(post)} class="block hover:text-[#548e9b] transition-colors">
+                  <h3 class="text-md font-semibold mb-1">{post.title}</h3>
+                </a>
+              </div>
             <div class="flex-shrink-0">
               <a href={getPostUrl(post)} class="block">
                 <div class="w-32 h-24 relative overflow-hidden">
