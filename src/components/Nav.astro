@@ -2,32 +2,37 @@
 import ThemeToggleButton from './ThemeToggleButton.svelte';
 
 export const current = '';
-let isOpen = false;
-
-// Function to toggle mobile menu
-function toggleMenu() {
-  isOpen = !isOpen;
-}
-
-// Close menu when clicking outside (client-side only)
-let navElement;
 ---
 
 <script>
-  // Client-side code for handling clicks outside the nav
-  if (typeof document !== 'undefined') {
+  // Client-side JavaScript that runs in the browser
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get references to elements
+    const menuButton = document.querySelector('.menu-icon');
+    const navLinks = document.querySelector('.nav-links');
+    
+    // Add click event to toggle menu
+    if (menuButton) {
+      menuButton.addEventListener('click', () => {
+        navLinks.classList.toggle('open');
+        
+        // Change menu icon based on state
+        const isOpen = navLinks.classList.contains('open');
+        menuButton.innerHTML = isOpen ? '✕' : '☰';
+      });
+    }
+    
+    // Close menu when clicking outside
     document.addEventListener('click', (event) => {
-      const nav = document.querySelector('nav');
-      const menuIcon = document.querySelector('.menu-icon');
-      
-      if (nav && !nav.contains(event.target) && event.target !== menuIcon) {
-        const navLinks = document.querySelector('.nav-links');
-        if (navLinks.classList.contains('open')) {
-          navLinks.classList.remove('open');
-        }
+      if (navLinks && 
+          navLinks.classList.contains('open') && 
+          !navLinks.contains(event.target) && 
+          event.target !== menuButton) {
+        navLinks.classList.remove('open');
+        menuButton.innerHTML = '☰';
       }
     });
-  }
+  });
 </script>
 
 <style>
@@ -39,14 +44,13 @@ let navElement;
     justify-content: flex-end;
     text-transform: uppercase;
     position: relative;
-    padding: 0;
   }
 
   .menu-icon {
     display: none;
     cursor: pointer;
     font-size: 1.8rem;
-    background: none;
+    background: var(--background-body);
     border: none;
     padding: 5px;
     z-index: 100;
@@ -59,7 +63,7 @@ let navElement;
   }
 
   a {
-    color: inherit;
+    color: var(--text-main);
     text-decoration: none;
     padding: 10px 5px;
     display: block;
@@ -80,7 +84,7 @@ let navElement;
     bottom: 0;
     width: 100%;
     height: 2px;
-    background: var(--text-secondary);
+    background: var(--background-body);
     transform: scaleX(0);
   }
 
@@ -90,7 +94,7 @@ let navElement;
   }
 
   .selected::before {
-    background: var(--primary-color);
+    background: var(--background-body);
   }
 
   .theme-toggle-container {
@@ -111,15 +115,18 @@ let navElement;
     .nav-links {
       display: none;
       flex-direction: column;
-      position: absolute;
-      top: calc(100% + 10px);
+      position: fixed;
+      top: 0;
+      left: 0;
       right: 0;
-      background: var(--background);
-      width: 200px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 10px;
-      border-radius: 4px;
-      z-index: 99;
+      bottom: 0;
+      height: 100vh;
+      width: 100%;
+      background: var(--background-body);
+      z-index: 98;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
     }
 
     .nav-links.open {
@@ -127,32 +134,34 @@ let navElement;
     }
     
     .nav-links a {
-      width: 100%;
-      text-align: left;
-      padding: 12px 15px;
+      width: auto;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.2rem;
+      max-width: 200px;
     }
     
     .theme-toggle-container {
       order: 0;
       margin-left: 0;
       margin-right: auto;
+      z-index: 99;
+      position: relative;
     }
   }
 </style>
 
-<nav bind:this={navElement}>
-  <!-- Theme Toggle positioned on the left on mobile -->
-  <div class="theme-toggle-container">
-    <ThemeToggleButton client:load />
-  </div>
+<nav>
+  
+  
   
   <!-- Hamburger Button for Mobile -->
-  <button class="menu-icon" aria-label="Toggle navigation menu" on:click={toggleMenu}>
-    {isOpen ? '✕' : '☰'}
+  <button class="menu-icon" aria-label="Toggle navigation menu">
+    ☰
   </button>
 
-  <!-- Navigation Links with toggle class -->
-  <div class={`nav-links ${isOpen ? 'open' : ''}`}>
+  <!-- Navigation Links -->
+  <div class="nav-links">
     <a class={current === "" ? "selected" : ""} href='/'>home</a>
     <a class={current === "about" ? "selected" : ""} href='/about'>about</a>
     <a class={current === "blog/news" ? "selected" : ""} href='/blog/news/1'>news</a>
@@ -160,5 +169,10 @@ let navElement;
     <a class={current === "blog/deals" ? "selected" : ""} href='/blog/deals/1'>deals</a>
     <a class={current === "blog/trailers" ? "selected" : ""} href='/blog/trailers/1'>trailers</a>
     <a class={current === "blog/entertainment" ? "selected" : ""} href='/blog/entertainment/1'>entertainment</a>
+  </div>
+
+    <!-- Theme Toggle positioned on the right on mobile -->
+  <div class="theme-toggle-container">
+    <ThemeToggleButton client:load />
   </div>
 </nav>
