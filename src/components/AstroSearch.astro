@@ -23,83 +23,114 @@ const bundlePath = `${import.meta.env.BASE_URL}pagefind/`;
 </div>
 
 <script>
-  // Wait for the module to be available
-  const initPageFind = async () => {
-    try {
-      // Dynamically import PagefindUI
-      const { PagefindUI } = await import('@pagefind/default-ui');
-      
-      const allSelector = "[data-pagefind-ui]";
-      for (const el of document.querySelectorAll(
-        `${allSelector}.pagefind-init`
-      )) {
-        const elSelector = [
-          ...(el.id ? [`#${el.id}`] : []),
-          ...[...el.classList.values()].map((c) => `.${c}`),
-          allSelector,
-        ].join("");
-        
-        const bundlePath = el.getAttribute("data-bundle-path");
-        const opts = JSON.parse(el.getAttribute("data-ui-options") ?? "{}");
-        
-        new PagefindUI({
-          ...opts,
-          element: elSelector,
-          bundlePath,
-        });
-        
-        el.classList.remove("pagefind-init");
-        let query = el.getAttribute("data-query");
+  class PageFindInitializer {
+    private static readonly INIT_DELAY = 100;
 
-        // Check if the current URL has any query params
-        const url = new URL(window.location.href);
-        const params = new URLSearchParams(url.search);
-        if (params.has("q")) {
-          query = params.get("q");
+    static async initialize() {
+      try {
+        const { PagefindUI } = await import('@pagefind/default-ui');
+        const elements = document.querySelectorAll('[data-pagefind-ui].pagefind-init');
+        
+        elements.forEach(el => this.setupSearchElement(el, PagefindUI));
+      } catch (e) {
+        console.error("Error initializing PagefindUI:", e);
+      }
+    }
+
+    private static setupSearchElement(el: Element, PagefindUI: any) {
+      const elSelector = this.buildSelector(el);
+      const bundlePath = el.getAttribute("data-bundle-path");
+      const opts = JSON.parse(el.getAttribute("data-ui-options") ?? "{}");
+
+      new PagefindUI({
+        ...opts,
+        element: elSelector,
+        bundlePath,
+      });
+
+      el.classList.remove("pagefind-init");
+      this.handleQueryParams(el);
+    }
+
+    private static buildSelector(el: Element): string {
+      return [
+        ...(el.id ? [`#${el.id}`] : []),
+        ...[...el.classList.values()].map(c => `.${c}`),
+        '[data-pagefind-ui]'
+      ].join("");
+    }
+
+    private static handleQueryParams(el: Element) {
+      let query = el.getAttribute("data-query");
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.search);
+
+      if (params.has("q")) {
+        query = params.get("q");
+      }
+
+      setTimeout(() => {
+        const input = el.querySelector('input[type="text"]') as HTMLInputElement;
+        if (!input) return;
+
+        if (query) {
+          input.value = query;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.focus();
         }
 
-        // Wait a moment for PagefindUI to initialize its elements
-        setTimeout(() => {
-          const input = el.querySelector(`input[type="text"]`);
-          
-          if (input && query) {
-            input.value = query;
-            input.dispatchEvent(new Event("input", { bubbles: true }));
-            input.focus();
-          }
-
-          // Add Listener to update the URL when the input changes
-          if (input) {
-            input.addEventListener("input", (e) => {
-              const input = e.target as HTMLInputElement;
-              const url = new URL(window.location.href);
-              const params = new URLSearchParams(url.search);
-              
-              if (input.value) {
-                params.set("q", input.value);
-              } else {
-                params.delete("q");
-              }
-              
-              window.history.replaceState({}, "", 
-                params.toString() ? `${url.pathname}?${params}` : url.pathname
-              );
-            });
-          }
-        }, 100);
-      }
-    } catch (e) {
-      console.error("Error initializing PagefindUI:", e);
+        this.setupInputListener(input);
+      }, this.INIT_DELAY);
     }
-  };
 
-  // Initialize on page load
-  document.addEventListener("astro:page-load", initPageFind);
-  
-  // Also initialize on regular page load for non-Astro View Transitions
+    private static setupInputListener(input: HTMLInputElement) {
+      input.addEventListener("input", (e) => {
+        const target = e.target as HTMLInputElement;
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        if (target.value) {
+          params.set("q", target.value);
+        } else {
+          params.delete("q");
+        }
+
+        window.history.replaceState(
+          {}, 
+          "", 
+          params.toString() ? `${url.pathname}?${params}` : url.pathname
+        );
+      });
+    }
+  }
+
+  // Initialize on Astro page load
+  document.addEventListener("astro:page-load", () => PageFindInitializer.initialize());
+
+  // Initialize on regular page load
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initPageFind);
+    document.addEventListener("DOMContentLoaded", () => PageFindInitializer.initialize());
   } else {
-    initPageFind();
+    PageFindInitializer.initialize();
   }
 </script>
+
+<style>
+  :global(.pagefind-ui) {
+    --pagefind-ui-scale: 0.95;
+    --pagefind-ui-primary: var(--primary-color);
+    --pagefind-ui-text: var(--text-main);
+    --pagefind-ui-background: var(--background-body);
+    --pagefind-ui-border: #e1e1e1;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: var(--font-family-sans);
+  }
+
+  :global(.pagefind-ui__search-input) {
+    border-radius: 8px !important;
+  }
+
+  :global(.pagefind-ui__results-area) {
+    margin-top: 1rem;
+  }
+</style>

@@ -58,7 +58,7 @@ export default defineConfig({
     },
     plugins: [],
     ssr: {
-      noExternal: [],
+      noExternal: ['@pagefind/default-ui'],
     },
   },
   
