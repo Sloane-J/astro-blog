@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "tinacms dev -c \"astro dev\"",
     "start": "astro dev",
-    "build": "astro build && npx pagefind --site dist",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "postbuild": "pagefind --site dist/"
+    "postbuild": "npx pagefind --site dist/"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.1.1",
