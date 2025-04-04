@@ -1,14 +1,18 @@
 import { defineConfig } from "tinacms";
 
+// Determine the current Git branch on the client side
 const branch =
-  process.env.NEXT_PUBLIC_TINA_BRANCH ||
-  process.env.NETLIFY_BRANCH ||
-  process.env.HEAD ||
-  "main";
+  import.meta.env.PUBLIC_TINA_BRANCH ||         // Optional manual override
+  import.meta.env.PUBLIC_VERCEL_GIT_COMMIT_REF || // Set in Vercel dashboard as a PUBLIC_ var
+  "main";                                        // Default fallback
 
-// Use environment variables without hardcoded fallbacks
-const clientId = process.env.NEXT_PUBLIC_TINA_CLIENT_ID;
+// Load sensitive and public environment variables
+const clientId = process.env.PUBLIC_TINA_CLIENT_ID;
 const token = process.env.TINA_TOKEN;
+
+if (!clientId || !token) {
+  throw new Error("Missing required environment variables: PUBLIC_TINA_CLIENT_ID or TINA_TOKEN");
+}
 
 export default defineConfig({
   branch,
