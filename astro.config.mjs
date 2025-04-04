@@ -22,12 +22,10 @@ export default defineConfig({
   
   // Your site URL
   site: 'https://nextframe-digest.vercel.app',
-
-  integrations: robotsTxt(),
   
   // Build options for performance
   build: {
-    manifest:true,
+    manifest: true,
     inlineStylesheets: 'auto',
     format: 'file',
     assets: '_assets',
@@ -65,14 +63,13 @@ export default defineConfig({
   // Enable built-in prefetching
   prefetch: true,
   
-  // Add key integrations
+  // Add key integrations - combined all integrations into a single array
   integrations: [
     mdx(),
     svelte(),
     tailwind({
       applyBaseStyles: true, // enables Tailwind's base styles (if you're using your own resets)
     }),
-  
     compress({
       CSS: true,
       HTML: true,
@@ -107,14 +104,9 @@ export default defineConfig({
         // search: "<svg>...</svg>",
         // close: "<svg>...</svg>",
       }
-    })
+    }),
+    robotsTxt() // Added to the main integrations array
   ],
-
-  /* markdown: {
-    shikiConfig: {
-      theme: 'dracula',
-    },
-  }, */
   
   // Markdown configuration
   markdown: {
