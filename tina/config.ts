@@ -1,13 +1,13 @@
 import { defineConfig } from "tinacms";
 
-// Determine the current Git branch on the client side
+// Determine the current Git branch (safe for build-time usage)
 const branch =
-  import.meta.env.PUBLIC_TINA_BRANCH ||         // Optional manual override
-  import.meta.env.PUBLIC_VERCEL_GIT_COMMIT_REF || // Set in Vercel dashboard as a PUBLIC_ var
-  "main";                                        // Default fallback
+  process.env.NEXT_PUBLIC_TINA_BRANCH || // Optional manual override
+  process.env.VERCEL_GIT_COMMIT_REF || // Vercel's active branch (if exposed)
+  "main"; // Default fallback
 
 // Load sensitive and public environment variables
-const clientId = process.env.PUBLIC_TINA_CLIENT_ID;
+const clientId = process.env.PUBLIC_TINA_CLIENT_ID || process.env.NEXT_PUBLIC_TINA_CLIENT_ID;
 const token = process.env.TINA_TOKEN;
 
 if (!clientId || !token) {
@@ -25,15 +25,15 @@ export default defineConfig({
   media: {
     tina: {
       publicFolder: "public",
-      mediaRoot: "/assets/blog/",
+      mediaRoot: "assets/blog/", // Removed leading slash for better compatibility
     },
   },
   schema: {
     collections: [
       {
         name: "post",
-        label: "All Post",
-        path: "src/data/blog-posts",
+        label: "All Posts", // Fixed plural form
+        path: "src/data/blog-posts/", // Changed to reflect common Astro content structure
         format: "md",
         fields: [
           {

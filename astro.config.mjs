@@ -67,11 +67,12 @@ export default defineConfig({
   
   // Add key integrations
   integrations: [
-    mdx(), 
-    svelte(), 
+    mdx(),
+    svelte(),
     tailwind({
-      config: { applyBaseStyles: false },
+      applyBaseStyles: true, // enables Tailwind's base styles (if you're using your own resets)
     }),
+  
     compress({
       CSS: true,
       HTML: true,
