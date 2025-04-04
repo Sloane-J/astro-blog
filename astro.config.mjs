@@ -21,7 +21,7 @@ export default defineConfig({
   publicDir: './public',
   
   // Your site URL
-  site: 'https://nextframe-digest.netlify.app',
+  site: 'https://nextframe-digest.vercel.app',
 
   integrations: robotsTxt(),
   
