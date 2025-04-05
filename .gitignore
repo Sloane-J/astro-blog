@@ -20,6 +20,3 @@ pnpm-debug.log*
 .DS_Store
 
 node_modules
-
-# unused code for other projects
-src/pages/wild-code.astro
