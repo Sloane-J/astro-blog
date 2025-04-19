@@ -3,16 +3,13 @@ import { defineConfig } from "tinacms";
 // Determine the current Git branch (safe for build-time usage)
 const branch =
   process.env.NEXT_PUBLIC_TINA_BRANCH || // Optional manual override
-  process.env.VERCEL_GIT_COMMIT_REF || // Vercel's active branch (if exposed)
+  process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF || // Vercel's active branch (if exposed)
+  process.env.HEAD
   "main"; // Default fallback
 
 // Load sensitive and public environment variables
-const clientId = process.env.PUBLIC_TINA_CLIENT_ID || process.env.NEXT_PUBLIC_TINA_CLIENT_ID;
+const clientId = process.env.NEXT_PUBLIC_TINA_CLIENT_ID || process.env.NEXT_PUBLIC_TINA_CLIENT_ID;
 const token = process.env.TINA_TOKEN;
-
-if (!clientId || !token) {
-  throw new Error("Missing required environment variables: PUBLIC_TINA_CLIENT_ID or TINA_TOKEN");
-}
 
 export default defineConfig({
   branch,
@@ -83,7 +80,7 @@ export default defineConfig({
             required: true,
             ui: {
               component: "select",
-              options: ["Samuel D. Jnr", "Enerstina"],
+              options: ["Samuel D. Jnr", "Enerstina Yevugah"],
             },
           },
           {
