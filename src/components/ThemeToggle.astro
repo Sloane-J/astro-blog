@@ -1,0 +1,129 @@
+---
+// ThemeToggle.astro
+---
+
+<div class="theme-toggle">
+  <label class="theme-toggle-label">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fill-rule="evenodd"
+        d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+        clip-rule="evenodd"
+      />
+    </svg>
+    <input
+      type="radio"
+      name="theme-toggle"
+      value="light"
+      title="Use light theme"
+      aria-label="Use light theme"
+    />
+  </label>
+  <label class="theme-toggle-label">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+    </svg>
+    <input
+      type="radio"
+      name="theme-toggle"
+      value="dark"
+      title="Use dark theme"
+      aria-label="Use dark theme"
+    />
+  </label>
+</div>
+
+<style>
+  .theme-toggle {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .theme-toggle-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    color: var(--text-color);
+    opacity: 0.7;
+  }
+  
+  .theme-toggle-label.checked {
+    opacity: 1;
+  }
+  
+  .theme-toggle-label input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .theme-toggle-label svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+</style>
+
+<script>
+  // This script will run only on the client side
+  function setupThemeToggle() {
+    const themeToggle = document.querySelector('.theme-toggle');
+    const radioButtons = themeToggle.querySelectorAll('input[type="radio"]');
+    const rootEl = document.documentElement;
+    
+    // Determine initial theme
+    let currentTheme;
+    if (localStorage.getItem('theme')) {
+      currentTheme = localStorage.getItem('theme');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      currentTheme = 'dark';
+    } else {
+      currentTheme = 'light';
+    }
+    
+    // Apply initial theme
+    applyTheme(currentTheme);
+    
+    // Select correct radio button
+    radioButtons.forEach(input => {
+      if (input.value === currentTheme) {
+        input.checked = true;
+        input.closest('label').classList.add('checked');
+      }
+    });
+    
+    // Add event listeners
+    radioButtons.forEach(input => {
+      input.addEventListener('change', (e) => {
+        const newTheme = e.target.value;
+        applyTheme(newTheme);
+        
+        // Update checked status
+        document.querySelectorAll('.theme-toggle-label').forEach(label => {
+          label.classList.remove('checked');
+        });
+        e.target.closest('label').classList.add('checked');
+      });
+    });
+    
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        rootEl.classList.add('theme-dark');
+      } else {
+        rootEl.classList.remove('theme-dark');
+      }
+      localStorage.setItem('theme', theme);
+    }
+  }
+  
+  // Run setup when DOM is loaded
+  document.addEventListener('DOMContentLoaded', setupThemeToggle);
+  
+  // Or run immediately if the DOM is already loaded
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    setupThemeToggle();
+  }
+</script>
