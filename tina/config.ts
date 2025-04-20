@@ -1,21 +1,9 @@
 import { defineConfig } from "tinacms";
 
-// Determine the current Git branch (safe for build-time usage)
-const branch = "main";
-  process.env.NEXT_PUBLIC_TINA_BRANCH || // Optional manual override
-  process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF || // Vercel's active branch (if exposed)
-  process.env.HEAD
-  "main"; // Default fallback
-
-// Load sensitive and public environment variables
-const clientId = process.env.NEXT_PUBLIC_TINA_CLIENT_ID || process.env.NEXT_PUBLIC_TINA_CLIENT_ID;
-const token = process.env.TINA_TOKEN;
-
-
 export default defineConfig({
-  branch,
-  clientId,
-  token,
+  branch: "main",
+  clientId: process.env.TINA_CLIENT_ID || "",
+  token: process.env.TINA_TOKEN || "",
   build: {
     publicFolder: "public",
     outputFolder: "admin",
