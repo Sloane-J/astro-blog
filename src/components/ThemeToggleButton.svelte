@@ -1,23 +1,36 @@
 <script>
-  const rootEl = typeof document !== 'undefined' ? document.documentElement : null;
+  import { onMount } from 'svelte';
+  
   const themes = ['light', 'dark'];
-  let theme = ''
+  // Start with a default theme that matches what server will render
+  let theme = 'dark';
+  let mounted = false;
 
-  if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-    theme = localStorage.getItem('theme');
-  } else if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    theme = 'dark';
-  }
+  onMount(() => {
+    // This code only runs in the browser after hydration
+    if (localStorage.getItem('theme')) {
+      theme = localStorage.getItem('theme');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      theme = 'dark';
+    }
+    
+    applyTheme(theme);
+    mounted = true;
+  });
 
   function handleChange(event) {
     theme = event.target.value;
     localStorage.setItem('theme', theme);
+    applyTheme(theme);
   }
 
-  $: if (rootEl && theme === 'light') {
-    rootEl.classList.remove('theme-dark');
-  } else if (rootEl && theme === 'dark') {
-    rootEl.classList.add('theme-dark');
+  function applyTheme(currentTheme) {
+    const rootEl = document.documentElement;
+    if (currentTheme === 'light') {
+      rootEl.classList.remove('theme-dark');
+    } else if (currentTheme === 'dark') {
+      rootEl.classList.add('theme-dark');
+    }
   }
 
   const icons = [
@@ -63,4 +76,3 @@
     </label>
   {/each}
 </div>
-
