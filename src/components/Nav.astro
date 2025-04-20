@@ -9,21 +9,25 @@ interface Props {
 const { current } = Astro.props;
 ---
 
-<script>
+<!-- Add client:load directive to ensure the script runs properly in production -->
+<script client:load>
   class NavigationManager {
-    private menuButton: HTMLButtonElement | null;
-    private navLinks: HTMLDivElement | null;
-    private documentClickHandler: (event: MouseEvent) => void;
+    private menuButton;
+    private navLinks;
+    private documentClickHandler;
 
     constructor() {
-      this.menuButton = document.querySelector('.menu-icon');
-      this.navLinks = document.querySelector('.nav-links');
-      
-      this.documentClickHandler = this.handleDocumentClick.bind(this);
-      this.init();
+      // Wait until elements are definitely available
+      document.addEventListener('DOMContentLoaded', () => {
+        this.menuButton = document.querySelector('.menu-icon');
+        this.navLinks = document.querySelector('.nav-links');
+        
+        this.documentClickHandler = this.handleDocumentClick.bind(this);
+        this.init();
+      });
     }
 
-    private init(): void {
+    private init() {
       if (this.menuButton) {
         this.menuButton.addEventListener('click', () => this.toggleMenu());
       }
@@ -34,7 +38,7 @@ const { current } = Astro.props;
       });
     }
 
-    private toggleMenu(): void {
+    private toggleMenu() {
       if (!this.navLinks || !this.menuButton) return;
       
       const isOpen = this.navLinks.classList.toggle('open');
@@ -43,7 +47,7 @@ const { current } = Astro.props;
       document.body.style.overflow = isOpen ? 'hidden' : '';
     }
 
-    private closeMenu(): void {
+    private closeMenu() {
       if (!this.navLinks || !this.menuButton) return;
       
       this.navLinks.classList.remove('open');
@@ -52,10 +56,10 @@ const { current } = Astro.props;
       document.body.style.overflow = '';
     }
 
-    private handleDocumentClick(event: MouseEvent): void {
+    private handleDocumentClick(event) {
       if (!this.navLinks || !this.menuButton) return;
       
-      const target = event.target as HTMLElement;
+      const target = event.target;
       if (
         this.navLinks.classList.contains('open') && 
         !this.navLinks.contains(target) && 
@@ -66,9 +70,8 @@ const { current } = Astro.props;
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    new NavigationManager();
-  });
+  // Create an instance right away instead of waiting for DOMContentLoaded
+  new NavigationManager();
 </script>
 
 <style>
@@ -82,7 +85,6 @@ const { current } = Astro.props;
     position: relative;
     padding: 1rem;
   }
-
 
   .menu-icon {
     display: none;
@@ -144,7 +146,6 @@ const { current } = Astro.props;
       order: 1;
     }
 
-
     .nav-links {
       display: none;
       flex-direction: column;
@@ -164,7 +165,7 @@ const { current } = Astro.props;
     }
 
     .nav-links.open {
-      display: flex;
+      display: flex !important; /* Force display in production */
       opacity: 1;
     }
 
@@ -187,8 +188,6 @@ const { current } = Astro.props;
 </style>
 
 <nav>
-
-
   <button 
     class="menu-icon" 
     aria-label="Toggle navigation menu"
