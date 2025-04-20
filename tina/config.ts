@@ -1,7 +1,7 @@
 import { defineConfig } from "tinacms";
 
 export default defineConfig({
-  branch: process.env.VERCEL_GIT_COMMIT_REF || "",
+  branch: process.env.VERCEL_GIT_COMMIT_REF || process.env.HEAD || "",
   clientId: process.env.TINA_CLIENT_ID || "",
   token: process.env.TINA_TOKEN || "",
   build: {
@@ -11,15 +11,15 @@ export default defineConfig({
   media: {
     tina: {
       publicFolder: "public",
-      mediaRoot: "assets/blog/", // Removed leading slash for better compatibility
+      mediaRoot: "assets/blog",
     },
   },
   schema: {
     collections: [
       {
         name: "post",
-        label: "All Posts", // Fixed plural form
-        path: "src/data/blog-posts/", // Changed to reflect common Astro content structure
+        label: "All Posts",
+        path: "src/data/blog-posts",
         format: "md",
         fields: [
           {

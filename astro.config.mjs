@@ -9,9 +9,7 @@ import compress from "astro-compress";
 import sitemap from "@astrojs/sitemap";
 import pagefind from "astro-pagefind";
 import robotsTxt from 'astro-robots-txt';
-//import { getHighlighter } from 'shiki';
 
-// https://astro.build/config
 export default defineConfig({
   // Set output to static for better performance
   output: 'static',
@@ -21,13 +19,13 @@ export default defineConfig({
   publicDir: './public',
   
   // Your site URL
-  site: 'https://nextframe-digest.vercel.app',
+  site: 'https://nextframe-digest.vercel.app',  // Removed trailing slash
   
   // Build options for performance
   build: {
     manifest: true,
     inlineStylesheets: 'auto',
-    format: 'file',
+    // format: 'file', // This is causing routing issues - removed
     assets: '_assets',
   },
   
@@ -46,15 +44,18 @@ export default defineConfig({
       minify: 'terser',
       rollupOptions: {
         output: {
-          // Updated to prevent empty chunks
-          manualChunks: undefined
+          // Allow for better code splitting
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          }
         },
       },
     },
     optimizeDeps: {
       enabled: true,
     },
-    plugins: [],
     ssr: {
       noExternal: ['@pagefind/default-ui'],
     },
@@ -63,12 +64,12 @@ export default defineConfig({
   // Enable built-in prefetching
   prefetch: true,
   
-  // Add key integrations - combined all integrations into a single array
+  // Add key integrations
   integrations: [
     mdx(),
     svelte(),
     tailwind({
-      applyBaseStyles: true, // enables Tailwind's base styles (if you're using your own resets)
+      applyBaseStyles: true,
     }),
     compress({
       CSS: true,
@@ -83,36 +84,26 @@ export default defineConfig({
       lastmod: new Date('2025-03-26'),
     }),
     pagefind({
-      // Configuration options for Pagefind
       exclude: ["**/admin/**/*"],
       indexing: {
-        // Specify which extensions to index
         extensions: [".md", ".astro", ".html"],
-        // Adjust what HTML elements should be used for search results
         selectors: {
-          article: "article", // The main content area
-          header: "header h1", // The title of the page
-          body: "main", // The main content
-          image: "img", // Images
-          meta: "meta", // Meta tags
+          article: "article",
+          header: "header h1",
+          body: "main",
+          image: "img",
+          meta: "meta",
         },
       },
-      // Customize output
       customIcons: false,
-      customSvg: {
-        // Customize icons if needed
-        // search: "<svg>...</svg>",
-        // close: "<svg>...</svg>",
-      }
     }),
-    robotsTxt() // Added to the main integrations array
+    robotsTxt()
   ],
   
   // Markdown configuration
   markdown: {
     syntaxHighlight: 'shiki',
     shikiConfig: {
-      // Use a more direct approach for customizing the theme
       theme: 'dracula',
       wrap: true,
       langs: [

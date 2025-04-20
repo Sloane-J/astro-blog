@@ -1,6 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-import Logo from './Logo.astro';
+//import Logo from './Logo.astro';
 
 interface Props {
   current: string;
@@ -203,9 +203,9 @@ const { current } = Astro.props;
     <a class={current === "about" ? "selected" : ""} href="/about">About</a>
     <a class={current === "blog/news" ? "selected" : ""} href="/blog/news/1">News</a>
     <a class={current === "blog/tech-and-science" ? "selected" : ""} href="/blog/tech-and-science/1">Technology</a>
-    <a class={current === "blog/deals" ? "selected" : ""} href="/blog/deals/1">Deals</a>
-    <a class={current === "blog/trailers" ? "selected" : ""} href="/blog/trailers/1">Trailers</a>
     <a class={current === "blog/entertainment" ? "selected" : ""} href="/blog/entertainment/1">Entertainment</a>
+    <a class={current === "blog/trailers" ? "selected" : ""} href="/blog/trailers/1">Trailers</a>
+    <a class={current === "blog/deals" ? "selected" : ""} href="/blog/deals/1">Deals</a>
   </div>
 
   <div class="theme-toggle-container">
